@@ -1,0 +1,752 @@
+System Call Tracing With Strace
+
+1.) Run the program
+kan1shka9@dev:~/Desktop/GDB/4$ ls
+Add_Sub_change
+kan1shka9@dev:~/Desktop/GDB/4$ ./Add_Sub_change
+Segmentation fault (core dumped)
+kan1shka9@dev:~/Desktop/GDB/4$ ./Add_Sub_change 20 30
+
+
+ Welcome to a Simple Add/Subtract Program
+
+
+Sum of 20 + 30 = 50
+
+Difference of 20 - 30 = -10
+
+
+kan1shka9@dev:~/Desktop/GDB/4$
+
+2.) Strace the program
+kan1shka9@dev:~/Desktop/GDB/4$ strace ./Add_Sub_change 20 30
+execve("./Add_Sub_change", ["./Add_Sub_change", "20", "30"], [/* 22 vars */]) = 0
+brk(0)                                  = 0x8eb2000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773f000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb772b000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\340\233\1\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1758972, ...}) = 0
+mmap2(NULL, 1763964, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb757c000
+mmap2(0xb7725000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1a9000) = 0xb7725000
+mmap2(0xb7728000, 10876, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7728000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb757b000
+set_thread_area({entry_number:-1 -> 6, base_addr:0xb757b940, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xb7725000, 8192, PROT_READ)   = 0
+mprotect(0x8049000, 4096, PROT_READ)    = 0
+mprotect(0xb7764000, 4096, PROT_READ)   = 0
+munmap(0xb772b000, 80572)               = 0
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 16), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773e000
+write(1, "\n", 1
+)                       = 1
+write(1, "\n", 1
+)                       = 1
+write(1, " Welcome to a Simple Add/Subtrac"..., 42 Welcome to a Simple Add/Subtract Program
+) = 42
+write(1, "\n", 1
+)                       = 1
+write(1, "\n", 1
+)                       = 1
+write(1, "Sum of 20 + 30 = 50\n\n", 21Sum of 20 + 30 = 50
+
+) = 21
+write(1, "Difference of 20 - 30 = -10\n\n", 29Difference of 20 - 30 = -10
+
+) = 29
+fstat64(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 16), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773d000
+read(0,
+"\n", 1024)                     = 1
+exit_group(0)                           = ?
++++ exited with 0 +++
+kan1shka9@dev:~/Desktop/GDB/4$
+
+3.) Save the strace output using -o option
+kan1shka9@dev:~/Desktop/GDB/4$ strace -o strace_output ./Add_Sub_change 20 30
+
+
+ Welcome to a Simple Add/Subtract Program
+
+
+Sum of 20 + 30 = 50
+
+Difference of 20 - 30 = -10
+
+
+kan1shka9@dev:~/Desktop/GDB/4$ ls
+Add_Sub_change  Add_Sub_change.c  strace_output
+kan1shka9@dev:~/Desktop/GDB/4$ cat strace_output | head
+execve("./Add_Sub_change", ["./Add_Sub_change", "20", "30"], [/* 22 vars */]) = 0
+brk(0)                                  = 0x8de4000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7739000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7725000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+
+4.) Get absolute time-stamp for strace using -t option
+kan1shka9@dev:~/Desktop/GDB/4$ strace -t ./Add_Sub_change 20 30
+07:18:59 execve("./Add_Sub_change", ["./Add_Sub_change", "20", "30"], [/* 22 vars */]) = 0
+07:18:59 brk(0)                         = 0x841b000
+07:18:59 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+07:18:59 mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb772c000
+07:18:59 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+07:18:59 open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+07:18:59 fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+07:18:59 mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7718000
+07:18:59 close(3)                       = 0
+07:18:59 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+07:18:59 open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+07:18:59 read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\340\233\1\0004\0\0\0"..., 512) = 512
+07:18:59 fstat64(3, {st_mode=S_IFREG|0755, st_size=1758972, ...}) = 0
+07:18:59 mmap2(NULL, 1763964, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7569000
+07:18:59 mmap2(0xb7712000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1a9000) = 0xb7712000
+07:18:59 mmap2(0xb7715000, 10876, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7715000
+07:18:59 close(3)                       = 0
+07:18:59 mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7568000
+07:18:59 set_thread_area({entry_number:-1 -> 6, base_addr:0xb7568940, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+07:18:59 mprotect(0xb7712000, 8192, PROT_READ) = 0
+07:18:59 mprotect(0x8049000, 4096, PROT_READ) = 0
+07:18:59 mprotect(0xb7751000, 4096, PROT_READ) = 0
+07:18:59 munmap(0xb7718000, 80572)      = 0
+07:18:59 fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 16), ...}) = 0
+07:18:59 mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb772b000
+07:18:59 write(1, "\n", 1
+)              = 1
+07:18:59 write(1, "\n", 1
+)              = 1
+07:18:59 write(1, " Welcome to a Simple Add/Subtrac"..., 42 Welcome to a Simple Add/Subtract Program
+) = 42
+07:18:59 write(1, "\n", 1
+)              = 1
+07:18:59 write(1, "\n", 1
+)              = 1
+07:18:59 write(1, "Sum of 20 + 30 = 50\n\n", 21Sum of 20 + 30 = 50
+
+) = 21
+07:18:59 write(1, "Difference of 20 - 30 = -10\n\n", 29Difference of 20 - 30 = -10
+
+) = 29
+07:18:59 fstat64(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 16), ...}) = 0
+07:18:59 mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb772a000
+07:18:59 read(0,
+"\n", 1024)            = 1
+07:19:07 exit_group(0)                  = ?
+07:19:07 +++ exited with 0 +++
+kan1shka9@dev:~/Desktop/GDB/4$
+
+5.) Get relative time-stamp for strace using -r option
+kan1shka9@dev:~/Desktop/GDB/4$ strace -r ./Add_Sub_change 20 30
+     0.000000 execve("./Add_Sub_change", ["./Add_Sub_change", "20", "30"], [/* 22 vars */]) = 0
+     0.003317 brk(0)                    = 0x9c66000
+     0.002032 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+     0.000132 mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb771c000
+     0.000159 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+     0.000090 open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+     0.001054 fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+     0.000153 mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7708000
+     0.000113 close(3)                  = 0
+     0.000316 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+     0.000121 open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+     0.000089 read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\340\233\1\0004\0\0\0"..., 512) = 512
+     0.000830 fstat64(3, {st_mode=S_IFREG|0755, st_size=1758972, ...}) = 0
+     0.000087 mmap2(NULL, 1763964, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7559000
+     0.000071 mmap2(0xb7702000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1a9000) = 0xb7702000
+     0.000115 mmap2(0xb7705000, 10876, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7705000
+     0.000105 close(3)                  = 0
+     0.000099 mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7558000
+     0.000950 set_thread_area({entry_number:-1 -> 6, base_addr:0xb7558940, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+     0.000263 mprotect(0xb7702000, 8192, PROT_READ) = 0
+     0.000131 mprotect(0x8049000, 4096, PROT_READ) = 0
+     0.000073 mprotect(0xb7741000, 4096, PROT_READ) = 0
+     0.000068 munmap(0xb7708000, 80572) = 0
+     0.000223 fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 16), ...}) = 0
+     0.000664 mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb771b000
+     0.000094 write(1, "\n", 1
+)         = 1
+     0.000077 write(1, "\n", 1
+)         = 1
+     0.000068 write(1, " Welcome to a Simple Add/Subtrac"..., 42 Welcome to a Simple Add/Subtract Program
+) = 42
+     0.000074 write(1, "\n", 1
+)         = 1
+     0.000067 write(1, "\n", 1
+)         = 1
+     0.000106 write(1, "Sum of 20 + 30 = 50\n\n", 21Sum of 20 + 30 = 50
+
+) = 21
+     0.000082 write(1, "Difference of 20 - 30 = -10\n\n", 29Difference of 20 - 30 = -10
+
+) = 29
+     0.000963 fstat64(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 16), ...}) = 0
+     0.000091 mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb771a000
+     0.000067 read(0,
+"\n", 1024)       = 1
+     6.991467 exit_group(0)             = ?
+     0.000278 +++ exited with 0 +++
+kan1shka9@dev:~/Desktop/GDB/4$
+
+6.) Trace for specific syscalls
+kan1shka9@dev:~/Desktop/GDB/4$ strace -r -e write ./Add_Sub_change 20 30
+     0.000000 write(1, "\n", 1
+)         = 1
+     0.003498 write(1, "\n", 1
+)         = 1
+     0.004423 write(1, " Welcome to a Simple Add/Subtrac"..., 42 Welcome to a Simple Add/Subtract Program
+) = 42
+     0.002144 write(1, "\n", 1
+)         = 1
+     0.000114 write(1, "\n", 1
+)         = 1
+     0.000135 write(1, "Sum of 20 + 30 = 50\n\n", 21Sum of 20 + 30 = 50
+
+) = 21
+     0.000113 write(1, "Difference of 20 - 30 = -10\n\n", 29Difference of 20 - 30 = -10
+
+) = 29
+
+     2.390538 +++ exited with 0 +++
+
+7.) Strace Netcat
+kan1shka9@dev:~/Desktop/GDB/4$ strace nc google.com 80
+execve("/bin/nc", ["nc", "google.com", "80"], [/* 22 vars */]) = 0
+brk(0)                                  = 0x9483000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774e000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb773a000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libbsd.so.0", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0P\36\0\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=55044, ...}) = 0
+mmap2(NULL, 61060, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb772b000
+mmap2(0xb7738000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xc000) = 0xb7738000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libresolv.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0P'\0\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=83816, ...}) = 0
+mmap2(NULL, 96268, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7713000
+mprotect(0xb7726000, 4096, PROT_NONE)   = 0
+mmap2(0xb7727000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x13000) = 0xb7727000
+mmap2(0xb7729000, 6156, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7729000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\340\233\1\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1758972, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7712000
+mmap2(NULL, 1763964, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7563000
+mmap2(0xb770c000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1a9000) = 0xb770c000
+mmap2(0xb770f000, 10876, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb770f000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7562000
+set_thread_area({entry_number:-1 -> 6, base_addr:0xb7562700, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xb770c000, 8192, PROT_READ)   = 0
+mprotect(0xb7727000, 4096, PROT_READ)   = 0
+mprotect(0xb7738000, 4096, PROT_READ)   = 0
+mprotect(0x804e000, 4096, PROT_READ)    = 0
+mprotect(0xb7773000, 4096, PROT_READ)   = 0
+munmap(0xb773a000, 80572)               = 0
+brk(0)                                  = 0x9483000
+brk(0x94a4000)                          = 0x94a4000
+socket(PF_LOCAL, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 3
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+close(3)                                = 0
+socket(PF_LOCAL, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 3
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+close(3)                                = 0
+open("/etc/nsswitch.conf", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=507, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "# /etc/nsswitch.conf\n#\n# Example"..., 4096) = 507
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb773a000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/i686", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/tls/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/tls", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/i686", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i386-linux-gnu", {st_mode=S_IFDIR|0755, st_size=12288, ...}) = 0
+open("/usr/lib/i386-linux-gnu/tls/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/i686", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/tls/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/tls", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/i686", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/sse2", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+open("/usr/lib/i386-linux-gnu/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i386-linux-gnu/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i386-linux-gnu", {st_mode=S_IFDIR|0755, st_size=69632, ...}) = 0
+open("/lib/tls/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/tls/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/tls/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/tls/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/i686", 0xbffcbab0)     = -1 ENOENT (No such file or directory)
+open("/lib/tls/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/tls/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/sse2", 0xbffcbab0)     = -1 ENOENT (No such file or directory)
+open("/lib/tls/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls/cmov", 0xbffcbab0)     = -1 ENOENT (No such file or directory)
+open("/lib/tls/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/tls", 0xbffcbab0)          = -1 ENOENT (No such file or directory)
+open("/lib/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/lib/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i686/sse2", 0xbffcbab0)    = -1 ENOENT (No such file or directory)
+open("/lib/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i686/cmov", 0xbffcbab0)    = -1 ENOENT (No such file or directory)
+open("/lib/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/i686", 0xbffcbab0)         = -1 ENOENT (No such file or directory)
+open("/lib/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/sse2/cmov", 0xbffcbab0)    = -1 ENOENT (No such file or directory)
+open("/lib/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/sse2", 0xbffcbab0)         = -1 ENOENT (No such file or directory)
+open("/lib/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib/cmov", 0xbffcbab0)         = -1 ENOENT (No such file or directory)
+open("/lib/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/lib", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+open("/usr/lib/tls/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/i686", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/tls/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/tls", 0xbffcbab0)      = -1 ENOENT (No such file or directory)
+open("/usr/lib/i686/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i686/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i686/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i686/sse2", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i686/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i686/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/i686/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/i686", 0xbffcbab0)     = -1 ENOENT (No such file or directory)
+open("/usr/lib/sse2/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/sse2/cmov", 0xbffcbab0) = -1 ENOENT (No such file or directory)
+open("/usr/lib/sse2/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/sse2", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+open("/usr/lib/cmov/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib/cmov", 0xbffcbab0)     = -1 ENOENT (No such file or directory)
+open("/usr/lib/libnss_db.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+stat64("/usr/lib", {st_mode=S_IFDIR|0755, st_size=20480, ...}) = 0
+munmap(0xb773a000, 80572)               = 0
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb773a000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libnss_files.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\320\32\0\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=46812, ...}) = 0
+mmap2(NULL, 50132, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7555000
+mmap2(0xb7560000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xa000) = 0xb7560000
+close(3)                                = 0
+mprotect(0xb7560000, 4096, PROT_READ)   = 0
+munmap(0xb773a000, 80572)               = 0
+open("/etc/services", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=19558, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "# Network services, Internet sty"..., 4096) = 4096
+read(3, "\t\t# IPX\nipx\t\t213/udp\nimap3\t\t220/"..., 4096) = 4096
+read(3, "nessus\t\t1241/tcp\t\t\t# Nessus vuln"..., 4096) = 4096
+read(3, "qmaster\t6444/tcp\tsge_qmaster\t# G"..., 4096) = 4096
+read(3, "ion\nspamd\t\t783/tcp\t\t\t\t# spamassa"..., 4096) = 3174
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+socket(PF_LOCAL, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 3
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+close(3)                                = 0
+socket(PF_LOCAL, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 3
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+close(3)                                = 0
+open("/etc/host.conf", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=92, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "# The \"order\" line is only used "..., 4096) = 92
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+getpid()                                = 3937
+open("/etc/resolv.conf", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=172, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "# Dynamic resolv.conf(5) file fo"..., 4096) = 172
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+uname({sys="Linux", node="dev", ...})   = 0
+open("/etc/hosts", O_RDONLY|O_CLOEXEC)  = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=218, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "127.0.0.1\tlocalhost\n127.0.1.1\tde"..., 4096) = 218
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb773a000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libnss_mdns4_minimal.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\220\10\0\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=9676, ...}) = 0
+mmap2(NULL, 12396, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7551000
+mmap2(0xb7553000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0xb7553000
+close(3)                                = 0
+mprotect(0xb7553000, 4096, PROT_READ)   = 0
+munmap(0xb773a000, 80572)               = 0
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=80572, ...}) = 0
+mmap2(NULL, 80572, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb773a000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libnss_dns.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0@\f\0\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=22100, ...}) = 0
+mmap2(NULL, 24708, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb754a000
+mmap2(0xb754f000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x4000) = 0xb754f000
+close(3)                                = 0
+mprotect(0xb754f000, 4096, PROT_READ)   = 0
+munmap(0xb773a000, 80572)               = 0
+stat64("/etc/resolv.conf", {st_mode=S_IFREG|0644, st_size=172, ...}) = 0
+open("/etc/resolv.conf", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=172, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "# Dynamic resolv.conf(5) file fo"..., 4096) = 172
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+uname({sys="Linux", node="dev", ...})   = 0
+socket(PF_INET, SOCK_DGRAM|SOCK_NONBLOCK, IPPROTO_IP) = 3
+connect(3, {sa_family=AF_INET, sin_port=htons(53), sin_addr=inet_addr("127.0.1.1")}, 16) = 0
+gettimeofday({1436148033, 207843}, NULL) = 0
+poll([{fd=3, events=POLLOUT}], 1, 0)    = 1 ([{fd=3, revents=POLLOUT}])
+sendmmsg(3, {{{msg_name(0)=NULL, msg_iov(1)=[{"<\306\1\0\0\1\0\0\0\0\0\0\6google\3com\0\0\1\0\1", 28}], msg_controllen=0, msg_flags=0}, 28}, {{msg_name(0)=NULL, msg_iov(1)=[{"\276\267\1\0\0\1\0\0\0\0\0\0\6google\3com\0\0\34\0\1", 28}], msg_controllen=0, msg_flags=0}, 28}}, 2, MSG_NOSIGNAL) = 2
+poll([{fd=3, events=POLLIN}], 1, 5000)  = 1 ([{fd=3, revents=POLLIN}])
+ioctl(3, FIONREAD, [44])                = 0
+recvfrom(3, "<\306\201\200\0\1\0\1\0\0\0\0\6google\3com\0\0\1\0\1\300\f\0\1"..., 2048, 0, {sa_family=AF_INET, sin_port=htons(53), sin_addr=inet_addr("127.0.1.1")}, [16]) = 44
+gettimeofday({1436148033, 221435}, NULL) = 0
+poll([{fd=3, events=POLLIN}], 1, 4986)  = 1 ([{fd=3, revents=POLLIN}])
+ioctl(3, FIONREAD, [192])               = 0
+recvfrom(3, "\276\267\201\200\0\1\0\1\0\4\0\4\6google\3com\0\0\34\0\1\300\f\0\34"..., 2004, 0, {sa_family=AF_INET, sin_port=htons(53), sin_addr=inet_addr("127.0.1.1")}, [16]) = 192
+close(3)                                = 0
+open("/etc/gai.conf", O_RDONLY|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2584, ...}) = 0
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2584, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb774d000
+read(3, "# Configuration for getaddrinfo("..., 4096) = 2584
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0xb774d000, 4096)                = 0
+socket(PF_NETLINK, SOCK_RAW, 0)         = 3
+bind(3, {sa_family=AF_NETLINK, pid=0, groups=00000000}, 12) = 0
+getsockname(3, {sa_family=AF_NETLINK, pid=3937, groups=00000000}, [12]) = 0
+time(NULL)                              = 1436148033
+sendto(3, "\24\0\0\0\26\0\1\3A\341\231U\0\0\0\0\0\0\0\0", 20, 0, {sa_family=AF_NETLINK, pid=0, groups=00000000}, 12) = 20
+recvmsg(3, {msg_name(12)={sa_family=AF_NETLINK, pid=0, groups=00000000}, msg_iov(1)=[{"L\0\0\0\24\0\2\0A\341\231Ua\17\0\0\2\10\200\376\1\0\0\0\10\0\1\0\177\0\0\1"..., 4096}], msg_controllen=0, msg_flags=0}, 0) = 164
+recvmsg(3, {msg_name(12)={sa_family=AF_NETLINK, pid=0, groups=00000000}, msg_iov(1)=[{"H\0\0\0\24\0\2\0A\341\231Ua\17\0\0\n\200\200\376\1\0\0\0\24\0\1\0\0\0\0\0"..., 4096}], msg_controllen=0, msg_flags=0}, 0) = 144
+recvmsg(3, {msg_name(12)={sa_family=AF_NETLINK, pid=0, groups=00000000}, msg_iov(1)=[{"\24\0\0\0\3\0\2\0A\341\231Ua\17\0\0\0\0\0\0", 4096}], msg_controllen=0, msg_flags=0}, 0) = 20
+close(3)                                = 0
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 3
+connect(3, {sa_family=AF_INET, sin_port=htons(80), sin_addr=inet_addr("216.58.196.110")}, 16) = 0
+getsockname(3, {sa_family=AF_INET, sin_port=htons(53187), sin_addr=inet_addr("10.207.44.158")}, [16]) = 0
+close(3)                                = 0
+socket(PF_INET6, SOCK_DGRAM, IPPROTO_IP) = 3
+connect(3, {sa_family=AF_INET6, sin6_port=htons(80), inet_pton(AF_INET6, "2404:6800:4007:806::200e", &sin6_addr), sin6_flowinfo=0, sin6_scope_id=0}, 28) = -1 ENETUNREACH (Network is unreachable)
+close(3)                                = 0
+socket(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
+fcntl64(3, F_GETFL)                     = 0x2 (flags O_RDWR)
+fcntl64(3, F_SETFL, O_RDWR|O_NONBLOCK)  = 0
+connect(3, {sa_family=AF_INET, sin_port=htons(80), sin_addr=inet_addr("216.58.196.110")}, 16) = -1 EINPROGRESS (Operation now in progress)
+select(4, NULL, [3], NULL, NULL)        = 1 (out [3])
+getsockopt(3, SOL_SOCKET, SO_ERROR, [0], [4]) = 0
+fcntl64(3, F_SETFL, O_RDWR)             = 0
+poll([{fd=3, events=POLLIN}, {fd=0, events=POLLIN}], 2, -1GET /
+) = 1 ([{fd=0, revents=POLLIN}])
+read(0, "GET /\n", 2048)                = 6
+write(3, "GET /\n", 6)                  = 6
+poll([{fd=3, events=POLLIN}, {fd=0, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+read(3, "HTTP/1.0 302 Found\r\nCache-Contro"..., 2048) = 527
+write(1, "HTTP/1.0 302 Found\r\nCache-Contro"..., 527HTTP/1.0 302 Found
+Cache-Control: private
+Content-Type: text/html; charset=UTF-8
+Location: http://www.google.co.in/?gfe_rd=cr&ei=Q-GZVceTLePI8Aeczru4Aw
+Content-Length: 261
+Date: Mon, 06 Jul 2015 02:00:35 GMT
+Server: GFE/2.0
+Alternate-Protocol: 80:quic,p=0
+
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>302 Moved</TITLE></HEAD><BODY>
+<H1>302 Moved</H1>
+The document has moved
+<A HREF="http://www.google.co.in/?gfe_rd=cr&amp;ei=Q-GZVceTLePI8Aeczru4Aw">here</A>.
+</BODY></HTML>
+) = 527
+poll([{fd=3, events=POLLIN}, {fd=0, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+read(3, "", 2048)                       = 0
+shutdown(3, SHUT_RD)                    = 0
+close(3)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
+kan1shka9@dev:~/Desktop/GDB/4$
+
+8.) Trace by specific syscalls
+kan1shka9@dev:~/Desktop/GDB/4$ strace -e connect nc google.com 80 | grep 53
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+connect(3, {sa_family=AF_LOCAL, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)
+connect(3, {sa_family=AF_INET, sin_port=htons(53), sin_addr=inet_addr("127.0.1.1")}, 16) = 0
+connect(3, {sa_family=AF_INET, sin_port=htons(80), sin_addr=inet_addr("216.58.220.46")}, 16) = 0
+connect(3, {sa_family=AF_INET6, sin6_port=htons(80), inet_pton(AF_INET6, "2404:6800:4007:806::200e", &sin6_addr), sin6_flowinfo=0, sin6_scope_id=0}, 28) = -1 ENETUNREACH (Network is unreachable)
+connect(3, {sa_family=AF_INET, sin_port=htons(80), sin_addr=inet_addr("216.58.220.46")}, 16) = -1 EINPROGRESS (Operation now in progress)
+GET /
++++ exited with 0 +++
+kan1shka9@dev:~/Desktop/GDB/4$ strace -e send,recv nc google.com 80
+GET /
+HTTP/1.0 302 Found
+Cache-Control: private
+Content-Type: text/html; charset=UTF-8
+Location: http://www.google.co.in/?gfe_rd=cr&ei=zeKZVcTDG7Lv8wfpj6-4Cw
+Content-Length: 261
+Date: Mon, 06 Jul 2015 02:07:09 GMT
+Server: GFE/2.0
+Alternate-Protocol: 80:quic,p=0
+
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>302 Moved</TITLE></HEAD><BODY>
+<H1>302 Moved</H1>
+The document has moved
+<A HREF="http://www.google.co.in/?gfe_rd=cr&amp;ei=zeKZVcTDG7Lv8wfpj6-4Cw">here</A>.
+</BODY></HTML>
++++ exited with 0 +++
+kan1shka9@dev:~/Desktop/GDB/4$
+
+9.) Attaching to a running process
+For Add_Sub_change
+Terminal 1
+kan1shka9@dev:~/Desktop/GDB/4$ ./Add_Sub_change 20 20
+
+
+ Welcome to a Simple Add/Subtract Program
+
+
+Sum of 20 + 20 = 40
+
+Difference of 20 - 20 = 0
+
+
+kan1shka9@dev:~/Desktop/GDB/4$ 
+Terminal 2
+kan1shka9@dev:~$ ps -ax | grep Add_Sub_change
+ 4082 pts/3    S+     0:00 ./Add_Sub_change 20 20
+ 4086 pts/10   S+     0:00 grep --color=auto Add_Sub_change
+kan1shka9@dev:~$ sudo strace -p 4082
+[sudo] password for kan1shka9: 
+Process 4082 attached
+read(0, 
+"\n", 1024)                     = 1
+exit_group(0)                           = ?
++++ exited with 0 +++
+kan1shka9@dev:~$ 
+
+For nc
+Terminal 1
+kan1shka9@dev:~/Desktop/GDB/4$ nc google.com 80
+GET /
+HTTP/1.0 302 Found
+Cache-Control: private
+Content-Type: text/html; charset=UTF-8
+Location: http://www.google.co.in/?gfe_rd=cr&ei=P-SZVeTTKeTI8Aff5buYAg
+Content-Length: 261
+Date: Mon, 06 Jul 2015 02:13:19 GMT
+Server: GFE/2.0
+Alternate-Protocol: 80:quic,p=0
+
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>302 Moved</TITLE></HEAD><BODY>
+<H1>302 Moved</H1>
+The document has moved
+<A HREF="http://www.google.co.in/?gfe_rd=cr&amp;ei=P-SZVeTTKeTI8Aff5buYAg">here</A>.
+</BODY></HTML>
+kan1shka9@dev:~/Desktop/GDB/4$ 
+Terminal 2
+kan1shka9@dev:~$ ps -ax | grep nc
+ 1796 ?        Sl     0:00 /usr/lib/at-spi2-core/at-spi-bus-launcher
+ 4104 pts/3    S+     0:00 nc google.com 80
+ 4107 pts/10   S+     0:00 grep --color=auto nc
+kan1shka9@dev:~$ sudo strace -p 4104
+Process 4104 attached
+restart_syscall(<... resuming interrupted call ...>) = 1
+read(0, "GET /\n", 2048)                = 6
+write(3, "GET /\n", 6)                  = 6
+poll([{fd=3, events=POLLIN}, {fd=0, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+read(3, "HTTP/1.0 302 Found\r\nCache-Contro"..., 2048) = 527
+write(1, "HTTP/1.0 302 Found\r\nCache-Contro"..., 527) = 527
+poll([{fd=3, events=POLLIN}, {fd=0, events=POLLIN}], 2, -1) = 1 ([{fd=3, revents=POLLIN}])
+read(3, "", 2048)                       = 0
+shutdown(3, SHUT_RD)                    = 0
+close(3)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
+kan1shka9@dev:~$ 
+
+10.) Running as root important
+Terminal 1
+kan1shka9@dev:~/Desktop/GDB/4$ ./Add_Sub_change 20 20
+
+
+ Welcome to a Simple Add/Subtract Program
+
+
+Sum of 20 + 20 = 40
+
+Difference of 20 - 20 = 0
+Terminal 2
+kan1shka9@dev:~$ ps -ax | grep Add_Sub_change
+ 4125 pts/3    S+     0:00 ./Add_Sub_change 20 20
+ 4130 pts/10   S+     0:00 grep --color=auto Add_Sub_change
+kan1shka9@dev:~$ strace -p 4125
+strace: attach: ptrace(PTRACE_ATTACH, ...): Operation not permitted
+Could not attach to process.  If your uid matches the uid of the target
+process, check the setting of /proc/sys/kernel/yama/ptrace_scope, or try
+again as the root user.  For more details, see /etc/sysctl.d/10-ptrace.conf
+kan1shka9@dev:~$
+
+11.) Statistics on syscalls
+kan1shka9@dev:~/Desktop/GDB/4$ strace -c nc google.com 80
+GET /
+HTTP/1.0 302 Found
+Cache-Control: private
+Content-Type: text/html; charset=UTF-8
+Location: http://www.google.co.in/?gfe_rd=cr&ei=v-WZVf-aLZSu8weZh4CgBA
+Content-Length: 261
+Date: Mon, 06 Jul 2015 02:19:43 GMT
+Server: GFE/2.0
+Alternate-Protocol: 80:quic,p=0
+
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>302 Moved</TITLE></HEAD><BODY>
+<H1>302 Moved</H1>
+The document has moved
+<A HREF="http://www.google.co.in/?gfe_rd=cr&amp;ei=v-WZVf-aLZSu8weZh4CgBA">here</A>.
+</BODY></HTML>
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000570          71         8         6 connect
+  0.00    0.000000           0        27           read
+  0.00    0.000000           0         2           write
+  0.00    0.000000           0        82        64 open
+  0.00    0.000000           0        27           close
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           time
+  0.00    0.000000           0         1           getpid
+  0.00    0.000000           0         9         9 access
+  0.00    0.000000           0         3           brk
+  0.00    0.000000           0         2           ioctl
+  0.00    0.000000           0         2           gettimeofday
+  0.00    0.000000           0        12           munmap
+  0.00    0.000000           0         2           uname
+  0.00    0.000000           0         9           mprotect
+  0.00    0.000000           0         1           select
+  0.00    0.000000           0         6           poll
+  0.00    0.000000           0        29           mmap2
+  0.00    0.000000           0        65        58 stat64
+  0.00    0.000000           0        19           fstat64
+  0.00    0.000000           0         3           fcntl64
+  0.00    0.000000           0         1           set_thread_area
+  0.00    0.000000           0         1           sendmmsg
+  0.00    0.000000           0         9           socket
+  0.00    0.000000           0         1           bind
+  0.00    0.000000           0         2           getsockname
+  0.00    0.000000           0         1           sendto
+  0.00    0.000000           0         2           recvfrom
+  0.00    0.000000           0         1           shutdown
+  0.00    0.000000           0         1           getsockopt
+  0.00    0.000000           0         3           recvmsg
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000570                   333       137 total
+kan1shka9@dev:~/Desktop/GDB/4$

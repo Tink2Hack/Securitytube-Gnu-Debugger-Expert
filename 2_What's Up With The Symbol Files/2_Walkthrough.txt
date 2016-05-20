@@ -1,0 +1,611 @@
+What's Up With The Symbol Files
+
+1.) Write a simple add/subtract program. Compile it with and without debug symbols
+kan1shka9@dev:~/Desktop/GDB/2$ gcc Add_Sub.c -o Add_Sub_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ ls
+Add_Sub.c  Add_Sub_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ gcc Add_Sub.c -ggdb -o Add_Sub_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ ls
+Add_Sub.c  Add_Sub_DEBUG  Add_Sub_NO_DEBUG
+
+2.) Run the program output with DEBUG symbols inside GDB
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG...done.
+
+3.) Listing the source code
+(gdb) list
+18
+19          result = number_1 - number_2;
+20
+21          return result;
+22
+23      }
+24
+25      int main(int argc, char **argv)
+26      {
+27          int input_1 = atoi(argv[1]);
+(gdb) list 1
+1       // Add_Sub.c
+2
+3       #include<stdio.h>
+4
+5       int AddNumbers(int number_1, int number_2)
+6       {
+7           int sum = 0;
+8
+9           sum = number_1 + number_2;
+10
+(gdb)
+11          return sum;
+12
+13      }
+14
+15      int SubtractNumbers(int number_1, int number_2)
+16      {
+17          int result = 0;
+18
+19          result = number_1 - number_2;
+20
+(gdb)
+21          return result;
+22
+23      }
+24
+25      int main(int argc, char **argv)
+26      {
+27          int input_1 = atoi(argv[1]);
+28
+29          int input_2 = atoi(argv[2]);
+30
+(gdb)
+31          printf("\n\n Welcome to a Simple Add/Subtract Program\n\n\n");
+32
+33          printf("Sum of %d + %d = %d\n\n", input_1, input_2, AddNumbers(input_1, input_2));
+34
+35          printf("Difference of %d - %d = %d\n\n", input_1, input_2, SubtractNumbers(input_1, input_2));
+36
+37          getchar();
+38
+39          return 0;
+40
+(gdb)
+41      }
+
+4.) List will only work if you have the source code of the program being debugged
+(gdb) shell mv Add_Sub.c Add_Sub_rename.c
+(gdb) shell ls
+Add_Sub_DEBUG  Add_Sub_NO_DEBUG  Add_Sub_rename.c
+(gdb) list
+42      Add_Sub.c: No such file or directory.
+(gdb) shell mv Add_Sub_rename.c Add_Sub.c
+(gdb) shell ls
+Add_Sub.c  Add_Sub_DEBUG  Add_Sub_NO_DEBUG
+
+5.) List all the functions in the binary -> Will be different for NO_DEBUG version
+(gdb) info functions
+All defined functions:
+
+File Add_Sub.c:
+int AddNumbers(int, int);
+int SubtractNumbers(int, int);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048314  _init
+0x08048350  printf@plt
+0x08048360  getchar@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  __libc_start_main@plt
+0x080483a0  atoi@plt
+0x080483b0  _start
+0x080483e0  __x86.get_pc_thunk.bx
+0x080483f0  deregister_tm_clones
+0x08048420  register_tm_clones
+0x08048460  __do_global_dtors_aux
+0x08048480  frame_dummy
+0x080485a0  __libc_csu_init
+0x08048610  __libc_csu_fini
+0x08048614  _fini
+
+For the NO_DEBUG version
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_NO_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_NO_DEBUG...(no debugging symbols found)...done.
+(gdb) info functions
+All defined functions:
+
+Non-debugging symbols:
+0x08048314  _init
+0x08048350  printf@plt
+0x08048360  getchar@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  __libc_start_main@plt
+0x080483a0  atoi@plt
+0x080483b0  _start
+0x080483e0  __x86.get_pc_thunk.bx
+0x080483f0  deregister_tm_clones
+0x08048420  register_tm_clones
+0x08048460  __do_global_dtors_aux
+0x08048480  frame_dummy
+0x080484ad  AddNumbers
+0x080484ca  SubtractNumbers
+0x080484e9  main
+0x080485a0  __libc_csu_init
+0x08048610  __libc_csu_fini
+0x08048614  _fini
+
+6.) Identify the source file of the binary
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG...done.
+(gdb) info sources
+Source files for which symbols have been read in:
+
+/home/kan1shka9/Desktop/GDB/2/Add_Sub.c
+
+Source files for which symbols will be read in on demand:
+
+
+(gdb)
+
+7.) List the variables
+Will not list local variables. Will only list global and static variables
+(gdb) info variables
+All defined variables:
+
+Non-debugging symbols:
+0x08048628  _fp_hw
+0x0804862c  _IO_stdin_used
+0x080487bc  __FRAME_END__
+0x08049f08  __frame_dummy_init_array_entry
+0x08049f08  __init_array_start
+0x08049f0c  __do_global_dtors_aux_fini_array_entry
+0x08049f0c  __init_array_end
+0x08049f10  __JCR_END__
+0x08049f10  __JCR_LIST__
+0x08049f14  _DYNAMIC
+0x0804a000  _GLOBAL_OFFSET_TABLE_
+0x0804a024  __data_start
+0x0804a024  data_start
+0x0804a028  __dso_handle
+0x0804a02c  __TMC_END__
+0x0804a02c  __bss_start
+0x0804a02c  _edata
+0x0804a02c  completed
+0x0804a030  _end
+
+-> Add a global variable and see the variable list
+kan1shka9@dev:~/Desktop/GDB/2$ vim Add_Sub.c
+kan1shka9@dev:~/Desktop/GDB/2$ gcc Add_Sub.c -ggdb -o Add_Sub_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ gcc Add_Sub.c -o Add_Sub_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ ls
+Add_Sub.c  Add_Sub_DEBUG  Add_Sub_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG...done.
+(gdb) info variables
+All defined variables:
+
+File Add_Sub.c:
+int IamAGlobalVariable;
+
+Non-debugging symbols:
+0x08048628  _fp_hw
+0x0804862c  _IO_stdin_used
+0x080487bc  __FRAME_END__
+0x08049f08  __frame_dummy_init_array_entry
+0x08049f08  __init_array_start
+0x08049f0c  __do_global_dtors_aux_fini_array_entry
+0x08049f0c  __init_array_end
+0x08049f10  __JCR_END__
+0x08049f10  __JCR_LIST__
+0x08049f14  _DYNAMIC
+0x0804a000  _GLOBAL_OFFSET_TABLE_
+0x0804a024  __data_start
+0x0804a024  data_start
+0x0804a028  __dso_handle
+0x0804a02c  __TMC_END__
+0x0804a02c  __bss_start
+0x0804a02c  _edata
+0x0804a02c  completed
+0x0804a034  _end
+
+-> Looking into local variable
+(gdb) info scope <TAB>
+AddNumbers                              int
+atoi                                    _IO_stdin_used
+atoi@got.plt                            __JCR_END__
+atoi@plt                                __JCR_LIST__
+__bss_start                             __libc_csu_fini
+char                                    __libc_csu_init
+completed                               __libc_start_main
+__data_start                            __libc_start_main@got.plt
+data_start                              __libc_start_main@plt
+deregister_tm_clones                    long int
+__do_global_dtors_aux                   long long int
+__do_global_dtors_aux_fini_array_entry  long long unsigned int
+__dso_handle                            long unsigned int
+_DYNAMIC                                main
+_edata                                  printf
+_end                                    printf@got.plt
+_fini                                   printf@plt
+_fp_hw                                  puts
+frame_dummy                             puts@got.plt
+__frame_dummy_init_array_entry          puts@plt
+__FRAME_END__                           register_tm_clones
+getchar                                 short int
+getchar@got.plt                         short unsigned int
+getchar@plt                             signed char
+_GLOBAL_OFFSET_TABLE_                   sizetype
+__gmon_start__                          _start
+__gmon_start__@got.plt                  SubtractNumbers
+__gmon_start__@plt                      __TMC_END__
+IamAGlobalVariable                      unsigned char
+_init                                   unsigned int
+__init_array_end                        __x86.get_pc_thunk.bx
+__init_array_start
+(gdb) info scope AddNumbers
+Scope for AddNumbers:
+Symbol number_1 is a complex DWARF expression:
+     0: DW_OP_fbreg 0
+, length 4.
+Symbol number_2 is a complex DWARF expression:
+     0: DW_OP_fbreg 4
+, length 4.
+Symbol sum is a complex DWARF expression:
+     0: DW_OP_fbreg -12
+, length 4.
+(gdb) info scope SubtractNumbers
+Scope for SubtractNumbers:
+Symbol number_1 is a complex DWARF expression:
+     0: DW_OP_fbreg 0
+, length 4.
+Symbol number_2 is a complex DWARF expression:
+     0: DW_OP_fbreg 4
+, length 4.
+Symbol result is a complex DWARF expression:
+     0: DW_OP_fbreg -12
+, length 4.
+(gdb) info scope main
+Scope for main:
+Symbol argc is a complex DWARF expression:
+     0: DW_OP_fbreg 0
+, length 4.
+Symbol argv is a complex DWARF expression:
+     0: DW_OP_fbreg 4
+, length 4.
+Symbol input_1 is a complex DWARF expression:
+     0: DW_OP_breg4 24 [$esp]
+, length 4.
+Symbol input_2 is a complex DWARF expression:
+     0: DW_OP_breg4 28 [$esp]
+, length 4.
+
+8.) Rip debug symbols off a binary
+The Debug symbols have just been copied. They have not been stripped form the binary.
+Method 1:
+kan1shka9@dev:~/Desktop/GDB/2$ ls
+Add_Sub.c  Add_Sub_DEBUG  Add_Sub_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ objcopy --only-keep-debug Add_Sub_DEBUG DEBUG_symbols
+kan1shka9@dev:~/Desktop/GDB/2$ ls -la
+total 40
+drwxrwxr-x 2 kan1shka9 kan1shka9 4096 Jul  5 23:24 .
+drwxrwxr-x 4 kan1shka9 kan1shka9 4096 Jul  5 22:23 ..
+-rw-rw-r-- 1 kan1shka9 kan1shka9  692 Jul  5 23:13 Add_Sub.c
+-rwxrwxr-x 1 kan1shka9 kan1shka9 8873 Jul  5 23:14 Add_Sub_DEBUG
+-rwxrwxr-x 1 kan1shka9 kan1shka9 7541 Jul  5 23:14 Add_Sub_NO_DEBUG
+-rwxrwxr-x 1 kan1shka9 kan1shka9 5161 Jul  5 23:24 DEBUG_symbols
+kan1shka9@dev:~/Desktop/GDB/2$ cat DEBUG_symbols | grep AddNumbers
+Binary file (standard input) matches
+kan1shka9@dev:~/Desktop/GDB/2$ cat DEBUG_symbols | grep IamAGlobalVariable
+Binary file (standard input) matches
+kan1shka9@dev:~/Desktop/GDB/2$ cat DEBUG_symbols | grep aaaaa
+Method 2:
+kan1shka9@dev:~/Desktop/2$ gdb ./Add_Sub_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG...done.
+(gdb) maint print symbols DEBUG_symbols_2
+(gdb) shell ls
+Add_Sub.c  Add_Sub_DEBUG  Add_Sub_NO_DEBUG  DEBUG_symbols  DEBUG_symbols_2
+(gdb)
+
+9.) Stripping symbols off a binary
+kan1shka9@dev:~/Desktop/GDB/2$ strip --strip-debug Add_Sub_DEBUG
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG...(no debugging symbols found)...done.
+(gdb) info functions
+All defined functions:
+
+Non-debugging symbols:
+0x08048314  _init
+0x08048350  printf@plt
+0x08048360  getchar@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  __libc_start_main@plt
+0x080483a0  atoi@plt
+0x080483b0  _start
+0x080483e0  __x86.get_pc_thunk.bx
+0x080483f0  deregister_tm_clones
+0x08048420  register_tm_clones
+0x08048460  __do_global_dtors_aux
+0x08048480  frame_dummy
+0x080484ad  AddNumbers
+0x080484ca  SubtractNumbers
+0x080484e9  main
+0x080485a0  __libc_csu_init
+0x08048610  __libc_csu_fini
+0x08048614  _fini
+(gdb)
+Still some variables can be seen.
+In order to further remove them use --strip-unneeded option
+kan1shka9@dev:~/Desktop/GDB/2$ strip --strip-debug --strip-unneeded Add_Sub_DEBUG_stripped
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG_stripped
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG_stripped...(no debugging symbols found)...done.
+(gdb) info variables
+All defined variables:
+
+Non-debugging symbols:
+0x0804862c  _IO_stdin_used
+(gdb) info functions
+All defined functions:
+
+Non-debugging symbols:
+0x08048350  printf@plt
+0x08048360  getchar@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  __libc_start_main@plt
+0x080483a0  atoi@plt
+(gdb)
+
+10.) Adding Debug symbols to a Binary -> 2 options
+-> Add it to Binary
+kan1shka9@dev:~/Desktop/GDB/2$ objcopy --add-gnu-debuglink=DEBUG_symbols Add_Sub_DEBUG_stripped
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG_stripped
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG_stripped...Reading symbols from /home/kan1shka9/Desktop/GDB/2/DEBUG_symbols...done.
+done.
+(gdb) info variables
+All defined variables:
+
+File Add_Sub.c:
+int IamAGlobalVariable;
+
+Non-debugging symbols:
+0x08048628  _fp_hw
+0x0804862c  _IO_stdin_used
+0x080487bc  __FRAME_END__
+0x08049f08  __frame_dummy_init_array_entry
+0x08049f08  __init_array_start
+0x08049f0c  __do_global_dtors_aux_fini_array_entry
+0x08049f0c  __init_array_end
+0x08049f10  __JCR_END__
+0x08049f10  __JCR_LIST__
+0x08049f14  _DYNAMIC
+0x0804a000  _GLOBAL_OFFSET_TABLE_
+0x0804a024  __data_start
+0x0804a024  data_start
+0x0804a028  __dso_handle
+0x0804a02c  __TMC_END__
+0x0804a02c  __bss_start
+0x0804a02c  _edata
+0x0804a02c  completed
+0x0804a034  _end
+0x0804862c  _IO_stdin_used
+(gdb) info functions
+All defined functions:
+
+File Add_Sub.c:
+int AddNumbers(int, int);
+int SubtractNumbers(int, int);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048314  _init
+0x080483b0  _start
+0x080483e0  __x86.get_pc_thunk.bx
+0x080483f0  deregister_tm_clones
+0x08048420  register_tm_clones
+0x08048460  __do_global_dtors_aux
+0x08048480  frame_dummy
+0x080485a0  __libc_csu_init
+0x08048610  __libc_csu_fini
+0x08048614  _fini
+0x08048350  printf@plt
+0x08048360  getchar@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  __libc_start_main@plt
+0x080483a0  atoi@plt
+(gdb)
+
+-> Load the symbol files within GDB
+kan1shka9@dev:~/Desktop/GDB/2$ gdb ./Add_Sub_DEBUG_stripped
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Add_Sub_DEBUG_stripped...(no debugging symbols found)...done.
+(gdb) info functions
+All defined functions:
+
+Non-debugging symbols:
+0x08048350  printf@plt
+0x08048360  getchar@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  __libc_start_main@plt
+0x080483a0  atoi@plt
+(gdb) info variables
+All defined variables:
+
+Non-debugging symbols:
+0x0804862c  _IO_stdin_used
+(gdb) symbol-file DEBUG_symbols
+Reading symbols from DEBUG_symbols...done.
+(gdb) info variables
+All defined variables:
+
+File Add_Sub.c:
+int IamAGlobalVariable;
+
+Non-debugging symbols:
+0x08048628  _fp_hw
+0x0804862c  _IO_stdin_used
+0x080487bc  __FRAME_END__
+0x08049f08  __frame_dummy_init_array_entry
+0x08049f08  __init_array_start
+0x08049f0c  __do_global_dtors_aux_fini_array_entry
+0x08049f0c  __init_array_end
+0x08049f10  __JCR_END__
+0x08049f10  __JCR_LIST__
+0x08049f14  _DYNAMIC
+0x0804a000  _GLOBAL_OFFSET_TABLE_
+0x0804a024  __data_start
+0x0804a024  data_start
+0x0804a028  __dso_handle
+0x0804a02c  __TMC_END__
+0x0804a02c  __bss_start
+0x0804a02c  _edata
+0x0804a02c  completed
+0x0804a034  _end
+(gdb) info functions
+All defined functions:
+
+File Add_Sub.c:
+int AddNumbers(int, int);
+int SubtractNumbers(int, int);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048314  _init
+0x080483b0  _start
+0x080483e0  __x86.get_pc_thunk.bx
+0x080483f0  deregister_tm_clones
+0x08048420  register_tm_clones
+0x08048460  __do_global_dtors_aux
+0x08048480  frame_dummy
+0x080485a0  __libc_csu_init
+0x08048610  __libc_csu_fini
+0x08048614  _fini
+(gdb)

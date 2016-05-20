@@ -1,0 +1,269 @@
+Disassembling and Cracking a Simple Binary
+
+1.) Compile the program without debug symbols
+kan1shka9@dev:~/Desktop/GDB/9$ ls
+pass_crack.c
+kan1shka9@dev:~/Desktop/GDB/9$ gcc pass_crack.c -o pass_crack
+kan1shka9@dev:~/Desktop/GDB/9$ ls
+pass_crack  pass_crack.c
+kan1shka9@dev:~/Desktop/GDB/9$ ./pass_crack 123demo
+
+
+Incorrect password! Please try again!
+
+
+kan1shka9@dev:~/Desktop/GDB/9$
+
+2.) Debug using GDB -> Disassemble
+kan1shka9@dev:~/Desktop/GDB/9$ gdb ./pass_crack
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./pass_crack...(no debugging symbols found)...done.
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x080484f0 <+0>:     push   %ebp
+   0x080484f1 <+1>:     mov    %esp,%ebp
+   0x080484f3 <+3>:     and    $0xfffffff0,%esp
+   0x080484f6 <+6>:     sub    $0x20,%esp
+   0x080484f9 <+9>:     movl   $0x0,0x1c(%esp)
+   0x08048501 <+17>:    cmpl   $0x1,0x8(%ebp)
+   0x08048505 <+21>:    jg     0x8048528 <main+56>
+   0x08048507 <+23>:    mov    0xc(%ebp),%eax
+   0x0804850a <+26>:    mov    (%eax),%eax
+   0x0804850c <+28>:    mov    %eax,0x4(%esp)
+   0x08048510 <+32>:    movl   $0x8048622,(%esp)
+   0x08048517 <+39>:    call   0x8048360 <printf@plt>
+   0x0804851c <+44>:    movl   $0x0,(%esp)
+   0x08048523 <+51>:    call   0x8048390 <exit@plt>
+   0x08048528 <+56>:    mov    0xc(%ebp),%eax
+   0x0804852b <+59>:    add    $0x4,%eax
+   0x0804852e <+62>:    mov    (%eax),%eax
+   0x08048530 <+64>:    movl   $0x8048638,0x4(%esp)
+   0x08048538 <+72>:    mov    %eax,(%esp)
+   0x0804853b <+75>:    call   0x80484c1 <IsPasswordCorrect>
+   0x08048540 <+80>:    mov    %eax,0x1c(%esp)
+   0x08048544 <+84>:    cmpl   $0x1,0x1c(%esp)
+   0x08048549 <+89>:    jne    0x8048552 <main+98>
+   0x0804854b <+91>:    call   0x80484ad <UnlockSecret>
+   0x08048550 <+96>:    jmp    0x804855e <main+110>
+   0x08048552 <+98>:    movl   $0x8048640,(%esp)
+   0x08048559 <+105>:   call   0x8048370 <puts@plt>
+   0x0804855e <+110>:   mov    $0x0,%eax
+   0x08048563 <+115>:   leave
+   0x08048564 <+116>:   ret
+End of assembler dump.
+(gdb) set disassembly-flavor
+att    intel
+(gdb) set disassembly-flavor intel
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x080484f0 <+0>:     push   ebp
+   0x080484f1 <+1>:     mov    ebp,esp
+   0x080484f3 <+3>:     and    esp,0xfffffff0
+   0x080484f6 <+6>:     sub    esp,0x20
+   0x080484f9 <+9>:     mov    DWORD PTR [esp+0x1c],0x0
+   0x08048501 <+17>:    cmp    DWORD PTR [ebp+0x8],0x1
+   0x08048505 <+21>:    jg     0x8048528 <main+56>
+   0x08048507 <+23>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x0804850a <+26>:    mov    eax,DWORD PTR [eax]
+   0x0804850c <+28>:    mov    DWORD PTR [esp+0x4],eax
+   0x08048510 <+32>:    mov    DWORD PTR [esp],0x8048622
+   0x08048517 <+39>:    call   0x8048360 <printf@plt>
+   0x0804851c <+44>:    mov    DWORD PTR [esp],0x0
+   0x08048523 <+51>:    call   0x8048390 <exit@plt>
+   0x08048528 <+56>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x0804852b <+59>:    add    eax,0x4
+   0x0804852e <+62>:    mov    eax,DWORD PTR [eax]
+   0x08048530 <+64>:    mov    DWORD PTR [esp+0x4],0x8048638
+   0x08048538 <+72>:    mov    DWORD PTR [esp],eax
+   0x0804853b <+75>:    call   0x80484c1 <IsPasswordCorrect>
+   0x08048540 <+80>:    mov    DWORD PTR [esp+0x1c],eax
+   0x08048544 <+84>:    cmp    DWORD PTR [esp+0x1c],0x1
+   0x08048549 <+89>:    jne    0x8048552 <main+98>
+   0x0804854b <+91>:    call   0x80484ad <UnlockSecret>
+   0x08048550 <+96>:    jmp    0x804855e <main+110>
+   0x08048552 <+98>:    mov    DWORD PTR [esp],0x8048640
+   0x08048559 <+105>:   call   0x8048370 <puts@plt>
+   0x0804855e <+110>:   mov    eax,0x0
+   0x08048563 <+115>:   leave
+   0x08048564 <+116>:   ret
+End of assembler dump.
+(gdb) break *0x08048540
+Breakpoint 1 at 0x8048540
+(gdb) run aaaa
+Starting program: /home/kan1shka9/Desktop/GDB/9/pass_crack aaaa
+
+Breakpoint 1, 0x08048540 in main ()
+(gdb) disassemble $eip
+Dump of assembler code for function main:
+   0x080484f0 <+0>:     push   ebp
+   0x080484f1 <+1>:     mov    ebp,esp
+   0x080484f3 <+3>:     and    esp,0xfffffff0
+   0x080484f6 <+6>:     sub    esp,0x20
+   0x080484f9 <+9>:     mov    DWORD PTR [esp+0x1c],0x0
+   0x08048501 <+17>:    cmp    DWORD PTR [ebp+0x8],0x1
+   0x08048505 <+21>:    jg     0x8048528 <main+56>
+   0x08048507 <+23>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x0804850a <+26>:    mov    eax,DWORD PTR [eax]
+   0x0804850c <+28>:    mov    DWORD PTR [esp+0x4],eax
+   0x08048510 <+32>:    mov    DWORD PTR [esp],0x8048622
+   0x08048517 <+39>:    call   0x8048360 <printf@plt>
+   0x0804851c <+44>:    mov    DWORD PTR [esp],0x0
+   0x08048523 <+51>:    call   0x8048390 <exit@plt>
+   0x08048528 <+56>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x0804852b <+59>:    add    eax,0x4
+   0x0804852e <+62>:    mov    eax,DWORD PTR [eax]
+   0x08048530 <+64>:    mov    DWORD PTR [esp+0x4],0x8048638
+   0x08048538 <+72>:    mov    DWORD PTR [esp],eax
+   0x0804853b <+75>:    call   0x80484c1 <IsPasswordCorrect>
+=> 0x08048540 <+80>:    mov    DWORD PTR [esp+0x1c],eax
+   0x08048544 <+84>:    cmp    DWORD PTR [esp+0x1c],0x1
+   0x08048549 <+89>:    jne    0x8048552 <main+98>
+   0x0804854b <+91>:    call   0x80484ad <UnlockSecret>
+   0x08048550 <+96>:    jmp    0x804855e <main+110>
+   0x08048552 <+98>:    mov    DWORD PTR [esp],0x8048640
+   0x08048559 <+105>:   call   0x8048370 <puts@plt>
+   0x0804855e <+110>:   mov    eax,0x0
+   0x08048563 <+115>:   leave
+   0x08048564 <+116>:   ret
+End of assembler dump.
+(gdb) info registers
+eax            0x0      0
+ecx            0x9      9
+edx            0xbffff884       -1073743740
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff660       0xbffff660
+ebp            0xbffff688       0xbffff688
+esi            0x0      0
+edi            0x0      0
+eip            0x8048540        0x8048540 <main+80>
+eflags         0x202    [ IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) set $eax = 1
+(gdb) info registers
+eax            0x1      1
+ecx            0x9      9
+edx            0xbffff884       -1073743740
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff660       0xbffff660
+ebp            0xbffff688       0xbffff688
+esi            0x0      0
+edi            0x0      0
+eip            0x8048540        0x8048540 <main+80>
+eflags         0x202    [ IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) stepi
+0x08048544 in main ()
+(gdb) stepi
+0x08048549 in main ()
+(gdb) stepi
+0x0804854b in main ()
+(gdb) disassemble
+Dump of assembler code for function main:
+   0x080484f0 <+0>:     push   ebp
+   0x080484f1 <+1>:     mov    ebp,esp
+   0x080484f3 <+3>:     and    esp,0xfffffff0
+   0x080484f6 <+6>:     sub    esp,0x20
+   0x080484f9 <+9>:     mov    DWORD PTR [esp+0x1c],0x0
+   0x08048501 <+17>:    cmp    DWORD PTR [ebp+0x8],0x1
+   0x08048505 <+21>:    jg     0x8048528 <main+56>
+   0x08048507 <+23>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x0804850a <+26>:    mov    eax,DWORD PTR [eax]
+   0x0804850c <+28>:    mov    DWORD PTR [esp+0x4],eax
+   0x08048510 <+32>:    mov    DWORD PTR [esp],0x8048622
+   0x08048517 <+39>:    call   0x8048360 <printf@plt>
+   0x0804851c <+44>:    mov    DWORD PTR [esp],0x0
+   0x08048523 <+51>:    call   0x8048390 <exit@plt>
+   0x08048528 <+56>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x0804852b <+59>:    add    eax,0x4
+   0x0804852e <+62>:    mov    eax,DWORD PTR [eax]
+   0x08048530 <+64>:    mov    DWORD PTR [esp+0x4],0x8048638
+   0x08048538 <+72>:    mov    DWORD PTR [esp],eax
+   0x0804853b <+75>:    call   0x80484c1 <IsPasswordCorrect>
+   0x08048540 <+80>:    mov    DWORD PTR [esp+0x1c],eax
+   0x08048544 <+84>:    cmp    DWORD PTR [esp+0x1c],0x1
+   0x08048549 <+89>:    jne    0x8048552 <main+98>
+=> 0x0804854b <+91>:    call   0x80484ad <UnlockSecret>
+   0x08048550 <+96>:    jmp    0x804855e <main+110>
+   0x08048552 <+98>:    mov    DWORD PTR [esp],0x8048640
+   0x08048559 <+105>:   call   0x8048370 <puts@plt>
+   0x0804855e <+110>:   mov    eax,0x0
+   0x08048563 <+115>:   leave
+   0x08048564 <+116>:   ret
+End of assembler dump.
+(gdb) stepi
+0x080484ad in UnlockSecret ()
+(gdb) disassemble
+Dump of assembler code for function UnlockSecret:
+=> 0x080484ad <+0>:     push   ebp
+   0x080484ae <+1>:     mov    ebp,esp
+   0x080484b0 <+3>:     sub    esp,0x18
+   0x080484b3 <+6>:     mov    DWORD PTR [esp],0x8048600
+   0x080484ba <+13>:    call   0x8048370 <puts@plt>
+   0x080484bf <+18>:    leave
+   0x080484c0 <+19>:    ret
+End of assembler dump.
+(gdb) stepi
+0x080484ae in UnlockSecret ()
+(gdb) disassemble
+Dump of assembler code for function UnlockSecret:
+   0x080484ad <+0>:     push   ebp
+=> 0x080484ae <+1>:     mov    ebp,esp
+   0x080484b0 <+3>:     sub    esp,0x18
+   0x080484b3 <+6>:     mov    DWORD PTR [esp],0x8048600
+   0x080484ba <+13>:    call   0x8048370 <puts@plt>
+   0x080484bf <+18>:    leave
+   0x080484c0 <+19>:    ret
+End of assembler dump.
+(gdb) stepi
+0x080484b0 in UnlockSecret ()
+(gdb) disassemble
+Dump of assembler code for function UnlockSecret:
+   0x080484ad <+0>:     push   ebp
+   0x080484ae <+1>:     mov    ebp,esp
+=> 0x080484b0 <+3>:     sub    esp,0x18
+   0x080484b3 <+6>:     mov    DWORD PTR [esp],0x8048600
+   0x080484ba <+13>:    call   0x8048370 <puts@plt>
+   0x080484bf <+18>:    leave
+   0x080484c0 <+19>:    ret
+End of assembler dump.
+(gdb) stepi
+0x080484b3 in UnlockSecret ()
+(gdb) disassemble
+Dump of assembler code for function UnlockSecret:
+   0x080484ad <+0>:     push   ebp
+   0x080484ae <+1>:     mov    ebp,esp
+   0x080484b0 <+3>:     sub    esp,0x18
+=> 0x080484b3 <+6>:     mov    DWORD PTR [esp],0x8048600
+   0x080484ba <+13>:    call   0x8048370 <puts@plt>
+   0x080484bf <+18>:    leave
+   0x080484c0 <+19>:    ret
+End of assembler dump.
+(gdb) c
+Continuing.
+Secret code: 5647-6809-9378-0852
+
+[Inferior 1 (process 3460) exited normally]
+(gdb)

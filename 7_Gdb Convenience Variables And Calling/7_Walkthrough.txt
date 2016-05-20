@@ -1,0 +1,172 @@
+Gdb Convenience Variables And Calling Routines
+
+1.) Run the program
+kan1shka9@dev:~/Desktop/GDB/7$ ls
+Program_noexecfun_fix
+kan1shka9@dev:~/Desktop/GDB/7$
+kan1shka9@dev:~/Desktop/GDB/7$
+kan1shka9@dev:~/Desktop/GDB/7$ ./Program_noexecfun_fix AAA 12 23
+
+
+AAA
+
+Sum of 12 + 23 is 35
+
+2.) Run the program in GDB
+kan1shka9@dev:~/Desktop/GDB/7$ gdb ./Program_noexecfun_fix
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Program_noexecfun_fix...done.
+(gdb) set $i = 10
+(gdb) print $i
+$1 = 10
+(gdb) break main
+Breakpoint 1 at 0x80485b1: file Program_noexecfun_fix.c, line 36.
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/7/Program_noexecfun_fix AAA 10 20
+p
+Breakpoint 1, main (argc=4, argv=0xbffff704) at Program_noexecfun_fix.c:36
+36              int sum = 0;
+(gdb) print argv[1]
+$2 = 0xbffff86d "AAA"
+(gdb) set $demo = "BBBB"
+(gdb) print $demo
+$3 = "BBBB"
+(gdb) set argv[1] = $demo
+(gdb) print argv[1]
+$4 = 0x804b008 "BBBB"
+(gdb) c
+Continuing.
+
+
+BBBB
+
+Sum of 10 + 20 is 30
+
+[Inferior 1 (process 6737) exited normally]
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/7/Program_noexecfun_fix AAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0xbffff704) at Program_noexecfun_fix.c:36
+36              int sum = 0;
+(gdb) set $dyn = (char *)malloc(10)
+(gdb) print $dyn
+$5 = 0x804b008 ""
+(gdb) x/10xb $dyn
+0x804b008:      0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x804b010:      0x00    0x00
+(gdb) call strcpy($dyn, argv[1])
+$6 = 134524936
+(gdb) x/10xb $dyn
+0x804b008:      0x41    0x41    0x41    0x00    0x00    0x00    0x00    0x00
+0x804b010:      0x00    0x00
+(gdb) x/10xc $dyn
+0x804b008:      65 'A'  65 'A'  65 'A'  0 '\000'        0 '\000'        0 '\000'        0 '\000'        0 '\000'
+0x804b010:      0 '\000'        0 '\000'
+(gdb) set argv[1] = $dyn
+
+3.) Using the functions in the program
+kan1shka9@dev:~/Desktop/GDB/7$ gdb ./Program_noexecfun_fix
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Program_noexecfun_fix...done.
+(gdb) info functions
+All defined functions:
+
+File Program_noexecfun_fix.c:
+int AddNumbers(int, int);
+void EchoInput(char *);
+void FunctionShouldNotExecure(void);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048378  _init
+0x080483b0  printf@plt
+0x080483c0  __stack_chk_fail@plt
+0x080483d0  strcpy@plt
+0x080483e0  puts@plt
+0x080483f0  __gmon_start__@plt
+0x08048400  exit@plt
+0x08048410  __libc_start_main@plt
+0x08048420  atoi@plt
+0x08048430  _start
+0x08048460  __x86.get_pc_thunk.bx
+0x08048470  deregister_tm_clones
+0x080484a0  register_tm_clones
+0x080484e0  __do_global_dtors_aux
+0x08048500  frame_dummy
+0x08048640  __libc_csu_init
+0x080486b0  __libc_csu_fini
+0x080486b4  _fini
+(gdb) call AddNumbers(10,20)
+You can't do that without a process to debug.
+(gdb) break main
+Breakpoint 1 at 0x80485b1: file Program_noexecfun_fix.c, line 36.
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/7/Program_noexecfun_fix AAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0xbffff704) at Program_noexecfun_fix.c:36
+36              int sum = 0;
+(gdb) call AddNumbers(10,20)
+$1 = 30
+(gdb) set $i = 100
+(gdb) set $j = 200
+(gdb) call AddNumbers($i, $j)
+$2 = 300
+(gdb) call EchoInput("Hello")
+
+
+Hello
+
+(gdb) call EchoInput(argv[2])
+
+
+10
+
+(gdb) call EchoInput($dyn)
+Invalid cast.
+(gdb) set $dyn = (char *)malloc(10)
+(gdb) print $dyn
+$3 = 0x804b018 ""
+(gdb) x/10xb $dyn
+0x804b018:      0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x804b020:      0x00    0x00
+(gdb) call strcpy($dyn, argv[1])
+$4 = 134524952
+(gdb) x/10xb $dyn
+0x804b018:      0x41    0x41    0x41    0x00    0x00    0x00    0x00    0x00
+0x804b020:      0x00    0x00
+(gdb) x/10xc $dyn
+0x804b018:      65 'A'  65 'A'  65 'A'  0 '\000'        0 '\000'        0 '\000'        0 '\000'        0 '\000'
+0x804b020:      0 '\000'        0 '\000'
+(gdb) set argv[1] = $dyn
+(gdb) call EchoInput($dyn)
+
+
+AAA
+
+(gdb)

@@ -1,0 +1,99 @@
+Course Introduction And Lab Setup
+
+1.) Setting up the machine - install essential packages
+kan1shka9@dev:~$ sudo apt-get install build-essential make libglib2.0-dev
+[sudo] password for kan1shka9:
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+build-essential is already the newest version.
+make is already the newest version.
+make set to manually installed.
+The following extra packages will be installed:
+  libpcre3-dev libpcrecpp0 zlib1g-dev
+Suggested packages:
+  libglib2.0-doc
+The following NEW packages will be installed:
+  libglib2.0-dev libpcre3-dev libpcrecpp0 zlib1g-dev
+0 upgraded, 4 newly installed, 0 to remove and 324 not upgraded.
+Need to get 1,712 kB of archives.
+After this operation, 9,576 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://in.archive.ubuntu.com/ubuntu/ trusty/main libpcrecpp0 i386 1:8.31-2ubuntu2 [14.7 kB]
+Get:2 http://in.archive.ubuntu.com/ubuntu/ trusty/main libpcre3-dev i386 1:8.31-2ubuntu2 [232 kB]
+Get:3 http://in.archive.ubuntu.com/ubuntu/ trusty/main zlib1g-dev i386 1:1.2.8.dfsg-1ubuntu1 [181 kB]
+Get:4 http://in.archive.ubuntu.com/ubuntu/ trusty-updates/main libglib2.0-dev i386 2.40.2-0ubuntu1 [1,284 kB]
+Fetched 1,712 kB in 19s (88.6 kB/s)
+Selecting previously unselected package libpcrecpp0:i386.
+(Reading database ... 171325 files and directories currently installed.)
+Preparing to unpack .../libpcrecpp0_1%3a8.31-2ubuntu2_i386.deb ...
+Unpacking libpcrecpp0:i386 (1:8.31-2ubuntu2) ...
+Selecting previously unselected package libpcre3-dev:i386.
+Preparing to unpack .../libpcre3-dev_1%3a8.31-2ubuntu2_i386.deb ...
+Unpacking libpcre3-dev:i386 (1:8.31-2ubuntu2) ...
+Selecting previously unselected package zlib1g-dev:i386.
+Preparing to unpack .../zlib1g-dev_1%3a1.2.8.dfsg-1ubuntu1_i386.deb ...
+Unpacking zlib1g-dev:i386 (1:1.2.8.dfsg-1ubuntu1) ...
+Selecting previously unselected package libglib2.0-dev.
+Preparing to unpack .../libglib2.0-dev_2.40.2-0ubuntu1_i386.deb ...
+Unpacking libglib2.0-dev (2.40.2-0ubuntu1) ...
+Processing triggers for man-db (2.6.7.1-1ubuntu1) ...
+Processing triggers for libglib2.0-0:i386 (2.40.2-0ubuntu1) ...
+Setting up libpcrecpp0:i386 (1:8.31-2ubuntu2) ...
+Setting up libpcre3-dev:i386 (1:8.31-2ubuntu2) ...
+Setting up zlib1g-dev:i386 (1:1.2.8.dfsg-1ubuntu1) ...
+Setting up libglib2.0-dev (2.40.2-0ubuntu1) ...
+Processing triggers for libc-bin (2.19-0ubuntu6.5) ...
+
+2.) Simple program -> Write, compile and run
+kan1shka9@dev:~/Desktop/GDB$ ls
+main.c
+kan1shka9@dev:~/Desktop/GDB$ gcc main.c -o main
+kan1shka9@dev:~/Desktop/GDB$ ls
+main  main.c
+kan1shka9@dev:~/Desktop/GDB$ ./main
+Hello to the world of GNU debugger!
+
+3.) Debug using GDB
+kan1shka9@dev:~/Desktop/GDB$ gdb ./main
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./main...(no debugging symbols found)...done.
+(gdb)
+Debug symbols are missing so need to recompile again suing the -ggdb option
+
+4.) Compiling with -ggdb symbols
+kan1shka9@dev:~/Desktop/GDB$ gcc -ggdb main.c -o main_with_debug
+kan1shka9@dev:~/Desktop/GDB$ gcc main.c -o main_no_debug
+kan1shka9@dev:~/Desktop/GDB$ ls
+main.c  main_no_debug  main_with_debug
+kan1shka9@dev:~/Desktop/GDB$ gdb ./main_with_debug
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./main_with_debug...done.
+(gdb)
+Now GDB has fired up with debug symbols

@@ -1,0 +1,343 @@
+Modifying Registers and Memory
+
+1.) Compile and run the program
+kan1shka9@dev:~/Desktop/GDB/6$ ls
+Program_noexecfun.c
+kan1shka9@dev:~/Desktop/GDB/6$ gcc -ggdb Program_noexecfun.c -o Program_noexecfun
+kan1shka9@dev:~/Desktop/GDB/6$ ls
+Program_noexecfun  Program_noexecfun.c
+kan1shka9@dev:~/Desktop/GDB/6$ ./Program_noexecfun AAA 10 20
+
+
+AAA
+
+Sum of 10 + 20 is 30
+
+kan1shka9@dev:~/Desktop/GDB/6$
+
+2.) Examine using GDB
+kan1shka9@dev:~/Desktop/GDB/6$ gdb ./Program_noexecfun
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Program_noexecfun...done.
+(gdb) break main
+Breakpoint 1 at 0x8048577: file Program_noexecfun.c, line 34.
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x08048577 in main at Program_noexecfun.c:34
+(gdb) run AAAA 20 30
+Starting program: /home/kan1shka9/Desktop/GDB/6/Program_noexecfun AAAA 20 30
+
+Breakpoint 1, main (argc=4, argv=0xbffff714) at Program_noexecfun.c:34
+34              int sum = 0;
+(gdb) print argv[1]
+$1 = 0xbffff870 "AAAA"
+(gdb) print argv[2]
+$2 = 0xbffff875 "20"
+(gdb) print argv[3]
+$3 = 0xbffff878 "30"
+(gdb) x/x argv[1]
+0xbffff870:     0x41414141
+(gdb) x/s argv[1]
+0xbffff870:     "AAAA"
+(gdb) x/s argv[2]
+0xbffff875:     "20"
+(gdb) x/s argv[3]
+0xbffff878:     "30"
+(gdb) x/5c argv[1]
+0xbffff870:     65 'A'  65 'A'  65 'A'  65 'A'  0 '\000'
+(gdb) set {char} 0xbffff870 = 'B'
+(gdb) x/5c argv[1]
+0xbffff870:     66 'B'  65 'A'  65 'A'  65 'A'  0 '\000'
+(gdb) set {char} 0xbffff870 = 67
+(gdb) x/5c argv[1]
+0xbffff870:     67 'C'  65 'A'  65 'A'  65 'A'  0 '\000'
+(gdb) set {int} 0xbffff870 = 67
+(gdb) x/5c argv[1]
+0xbffff870:     67 'C'  0 '\000'        0 '\000'        0 '\000'        0 '\000'
+(gdb) set {int} 0xbffff870 = 0
+(gdb) x/5c argv[1]
+0xbffff870:     0 '\000'        0 '\000'        0 '\000'        0 '\000'        0 '\000'
+(gdb) set {int} 0xbffff870 = 1
+(gdb) x/5c argv[1]
+0xbffff870:     1 '\001'        0 '\000'        0 '\000'        0 '\000'        0 '\000'
+(gdb) set {char} 0xbffff870 = 'B'
+(gdb) set {char} (0xbffff870 + 1) = 'B'
+(gdb) set {char} (0xbffff870 + 2) = 'B'
+(gdb) set {char} (0xbffff870 + 3) = 'B'
+(gdb) x/5c argv[1]
+0xbffff870:     66 'B'  66 'B'  66 'B'  66 'B'  0 '\000'
+(gdb) c
+Continuing.
+
+
+BBBB
+
+Sum of 20 + 30 is 50
+
+[Inferior 1 (process 6053) exited normally]
+(gdb) run AAAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/6/Program_noexecfun AAAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0xbffff714) at Program_noexecfun.c:34
+34              int sum = 0;
+(gdb) l
+29      }
+30
+31      int main(int argc, char **argv)
+32      {
+33
+34              int sum = 0;
+35
+36              EchoInput(argv[1]);
+37
+38              sum = AddNumbers(atoi(argv[2]), atoi(argv[3]));
+(gdb)
+39
+40              printf("Sum of %s + %s is %d\n\n", argv[2], argv[3], sum);
+41
+42              return 0;
+43
+44      }
+(gdb) break 40
+Breakpoint 2 at 0x80485c1: file Program_noexecfun.c, line 40.
+(gdb) c
+Continuing.
+
+
+AAAA
+
+
+Breakpoint 2, main (argc=4, argv=0xbffff714) at Program_noexecfun.c:40
+40              printf("Sum of %s + %s is %d\n\n", argv[2], argv[3], sum);
+(gdb) print sum
+$4 = 30
+(gdb) set sum = 2000
+(gdb) c
+Continuing.
+Sum of 10 + 20 is 2000
+
+[Inferior 1 (process 6177) exited normally]
+
+3.) Examine using GDB for FunctionShouldNotExecure
+kan1shka9@dev:~/Desktop/GDB/6$ gdb ./Program_noexecfun
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Program_noexecfun...done.
+(gdb) info functions
+All defined functions:
+
+File Program_noexecfun.c:
+int AddNumbers(int, int);
+void EchoInput(char *);
+void FunctionShouldNotExecure(void);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048358  _init
+0x08048390  printf@plt
+0x080483a0  __stack_chk_fail@plt
+0x080483b0  strcpy@plt
+0x080483c0  puts@plt
+0x080483d0  __gmon_start__@plt
+0x080483e0  __libc_start_main@plt
+0x080483f0  atoi@plt
+0x08048400  _start
+0x08048430  __x86.get_pc_thunk.bx
+0x08048440  deregister_tm_clones
+0x08048470  register_tm_clones
+0x080484b0  __do_global_dtors_aux
+0x080484d0  frame_dummy
+0x08048600  __libc_csu_init
+0x08048670  __libc_csu_fini
+0x08048674  _fini
+(gdb) print FunctionShouldNotExecure
+$1 = {void (void)} 0x80484fd <FunctionShouldNotExecure>
+(gdb) info registers
+The program has no registers now.
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/6/Program_noexecfun AAA 10 20
+
+
+AAA
+
+Sum of 10 + 20 is 30
+
+[Inferior 1 (process 6414) exited normally]
+(gdb) break main
+Breakpoint 1 at 0x8048577: file Program_noexecfun.c, line 34.
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/6/Program_noexecfun AAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0xbffff714) at Program_noexecfun.c:34
+34              int sum = 0;
+(gdb) info registers
+eax            0x4      4
+ecx            0xc4fd0dc9       -990048823
+edx            0xbffff6a4       -1073744220
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff650       0xbffff650
+ebp            0xbffff678       0xbffff678
+esi            0x0      0
+edi            0x0      0
+eip            0x8048577        0x8048577 <main+10>
+eflags         0x286    [ PF SF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) set $eax = 10
+(gdb) info registers
+eax            0xa      10
+ecx            0xc4fd0dc9       -990048823
+edx            0xbffff6a4       -1073744220
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff650       0xbffff650
+ebp            0xbffff678       0xbffff678
+esi            0x0      0
+edi            0x0      0
+eip            0x8048577        0x8048577 <main+10>
+eflags         0x286    [ PF SF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) c
+Continuing.
+
+
+AAA
+
+Sum of 10 + 20 is 30
+
+[Inferior 1 (process 6419) exited normally]
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/6/Program_noexecfun AAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0xbffff714) at Program_noexecfun.c:34
+34              int sum = 0;
+(gdb) info registers
+eax            0x4      4
+ecx            0xabe5b6ee       -1411008786
+edx            0xbffff6a4       -1073744220
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff650       0xbffff650
+ebp            0xbffff678       0xbffff678
+esi            0x0      0
+edi            0x0      0
+eip            0x8048577        0x8048577 <main+10>
+eflags         0x286    [ PF SF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) set $eip = 0x80484fd
+(gdb) c
+Continuing.
+
+
+I should not execute!!!
+
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000004 in ?? ()
+(gdb)
+
+4.) Fixing the program to prevent Segmentation fault
+kan1shka9@dev:~/Desktop/GDB/6$ gcc -ggdb Program_noexecfun_fix.c -o Program_noexecfun_fix
+kan1shka9@dev:~/Desktop/GDB/6$ ls
+Program_noexecfun  Program_noexecfun.c  Program_noexecfun_fix  Program_noexecfun_fix.c
+kan1shka9@dev:~/Desktop/GDB/6$ gdb ./Program_noexecfun_fix
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./Program_noexecfun_fix...done.
+(gdb) break main
+Breakpoint 1 at 0x80485b1: file Program_noexecfun_fix.c, line 36.
+(gdb) info functions
+All defined functions:
+
+File Program_noexecfun_fix.c:
+int AddNumbers(int, int);
+void EchoInput(char *);
+void FunctionShouldNotExecure(void);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048378  _init
+0x080483b0  printf@plt
+0x080483c0  __stack_chk_fail@plt
+0x080483d0  strcpy@plt
+0x080483e0  puts@plt
+0x080483f0  __gmon_start__@plt
+0x08048400  exit@plt
+0x08048410  __libc_start_main@plt
+0x08048420  atoi@plt
+0x08048430  _start
+0x08048460  __x86.get_pc_thunk.bx
+0x08048470  deregister_tm_clones
+0x080484a0  register_tm_clones
+0x080484e0  __do_global_dtors_aux
+0x08048500  frame_dummy
+0x08048640  __libc_csu_init
+0x080486b0  __libc_csu_fini
+0x080486b4  _fini
+(gdb) print FunctionShouldNotExecure
+$1 = {void (void)} 0x804852d <FunctionShouldNotExecure>
+(gdb) set $eip = 0x804852d
+No registers.
+(gdb) run AAA 10 20
+Starting program: /home/kan1shka9/Desktop/GDB/6/Program_noexecfun_fix AAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0xbffff704) at Program_noexecfun_fix.c:36
+36              int sum = 0;
+(gdb) set $eip = 0x804852d
+(gdb) c
+Continuing.
+
+
+I should not execute!!!
+
+[Inferior 1 (process 6560) exited normally]
+(gdb)

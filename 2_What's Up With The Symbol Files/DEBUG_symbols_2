@@ -1,0 +1,63 @@
+
+Symtab for file Add_Sub.c
+Compilation directory is /home/kan1shka9/Desktop/GDB/2
+Read from object file /home/kan1shka9/Desktop/2/Add_Sub_DEBUG (0xa3c9180)
+Language: c
+
+Line table:
+
+ line 7 at 0x80484ad
+ line 8 at 0x80484b3
+ line 10 at 0x80484ba
+ line 12 at 0x80484c5
+ line 14 at 0x80484c8
+ line 17 at 0x80484ca
+ line 18 at 0x80484d0
+ line 20 at 0x80484d7
+ line 22 at 0x80484e4
+ line 24 at 0x80484e7
+ line 27 at 0x80484e9
+ line 28 at 0x80484f2
+ line 30 at 0x8048506
+ line 32 at 0x804851a
+ line 34 at 0x8048526
+ line 36 at 0x804855a
+ line 38 at 0x804858e
+ line 40 at 0x8048593
+ line 42 at 0x8048598
+ line 0 at 0x804859a
+
+Blockvector:
+
+block #000, object at 0xa3de48c, 1 syms/buckets in 0x80484ad..0x804859a
+ int AddNumbers(int, int); block object 0xa3dc038, 0x80484ad..0x80484ca
+ int SubtractNumbers(int, int); block object 0xa3dc1bc, 0x80484ca..0x80484e9
+ int main(int, char **); block object 0xa3dc404, 0x80484e9..0x804859a section .text
+ int IamAGlobalVariable; static at 0x804a030 section .bss
+  block #001, object at 0xa3dc46c under 0xa3de48c, 3 syms/buckets in 0x80484ad..0x804859a
+   typedef unsigned char unsigned char; 
+   typedef signed char signed char; 
+   typedef long int long int; 
+   typedef sizetype sizetype; 
+   typedef unsigned int unsigned int; 
+   typedef short unsigned int short unsigned int; 
+   typedef short int short int; 
+   typedef long unsigned int long unsigned int; 
+   typedef int int; 
+   typedef long long int long long int; 
+   typedef long long unsigned int long long unsigned int; 
+   typedef char char; 
+    block #002, object at 0xa3dc038 under 0xa3dc46c, 3 syms/buckets in 0x80484ad..0x80484ca, function AddNumbers
+     int number_1; computed at runtime
+     int number_2; computed at runtime
+     int sum; computed at runtime
+    block #003, object at 0xa3dc1bc under 0xa3dc46c, 3 syms/buckets in 0x80484ca..0x80484e9, function SubtractNumbers
+     int number_1; computed at runtime
+     int number_2; computed at runtime
+     int result; computed at runtime
+    block #004, object at 0xa3dc404 under 0xa3dc46c, 4 syms/buckets in 0x80484e9..0x804859a, function main
+     int argc; computed at runtime
+     char **argv; computed at runtime
+     int input_1; computed at runtime
+     int input_2; computed at runtime
+

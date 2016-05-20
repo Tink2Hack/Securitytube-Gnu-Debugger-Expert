@@ -1,0 +1,280 @@
+Cracking a Simple Binary with DEBUG Symbols
+
+1.) Compile and run the program
+kan1shka9@dev:~/Desktop/GDB/8$ ls
+pass_guess.c
+kan1shka9@dev:~/Desktop/GDB/8$ gcc -ggdb pass_guess.c -o pass_guess
+kan1shka9@dev:~/Desktop/GDB/8$ ls
+pass_guess  pass_guess.c
+kan1shka9@dev:~/Desktop/GDB/8$ ./pass_guess
+./pass_guess password_to_unlockkan1shka9@dev:~/Desktop/GDB/8$ ./pass_guess demo
+
+
+ Incorrect Password! please try again!
+
+
+kan1shka9@dev:~/Desktop/GDB/8$ ./pass_guess demo123
+
+
+ Incorrect Password! please try again!
+
+
+kan1shka9@dev:~/Desktop/GDB/8$
+
+2.) Strings
+kan1shka9@dev:~/Desktop/GDB/8$ strings pass_guess
+/lib/ld-linux.so.2
+8C=%
+libc.so.6
+_IO_stdin_used
+exit
+puts
+printf
+strcmp
+__libc_start_main
+__gmon_start__
+GLIBC_2.0
+PTRh
+[^_]
+Secret code: 7854-9624-8547-1236
+%s password_to_unlock
+l33tsp3ak
+ Incorrect Password! please try again!
+;*2$"
+GCC: (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
+GCC: (Ubuntu 4.8.2-19ubuntu1) 4.8.2
+pass_guess.c
+LhwZ1
+long long int
+password
+GNU C 4.8.4 -mtune=generic -march=i686 -ggdb -fstack-protector
+main
+UnlockSecret
+long long unsigned int
+unsigned char
+result
+argv
+/home/kan1shka9/Desktop/GDB/8
+argc
+short unsigned int
+userInput
+checkPass
+pass_guess.c
+short int
+IsPasswordCorrect
+sizetype
+.symtab
+.strtab
+.shstrtab
+.interp
+.note.ABI-tag
+.note.gnu.build-id
+.gnu.hash
+.dynsym
+.dynstr
+.gnu.version
+.gnu.version_r
+.rel.dyn
+.rel.plt
+.init
+.text
+.fini
+.rodata
+.eh_frame_hdr
+.eh_frame
+.init_array
+.fini_array
+.jcr
+.dynamic
+.got
+.got.plt
+.data
+.bss
+.comment
+.debug_aranges
+.debug_info
+.debug_abbrev
+.debug_line
+.debug_str
+crtstuff.c
+__JCR_LIST__
+deregister_tm_clones
+register_tm_clones
+__do_global_dtors_aux
+completed.6591
+__do_global_dtors_aux_fini_array_entry
+frame_dummy
+__frame_dummy_init_array_entry
+pass_guess.c
+__FRAME_END__
+__JCR_END__
+__init_array_end
+_DYNAMIC
+__init_array_start
+_GLOBAL_OFFSET_TABLE_
+__libc_csu_fini
+strcmp@@GLIBC_2.0
+_ITM_deregisterTMCloneTable
+__x86.get_pc_thunk.bx
+data_start
+printf@@GLIBC_2.0
+_edata
+_fini
+__data_start
+puts@@GLIBC_2.0
+__gmon_start__
+exit@@GLIBC_2.0
+__dso_handle
+_IO_stdin_used
+__libc_start_main@@GLIBC_2.0
+__libc_csu_init
+IsPasswordCorrect
+_end
+_start
+_fp_hw
+__bss_start
+main
+UnlockSecret
+_Jv_RegisterClasses
+__TMC_END__
+_ITM_registerTMCloneTable
+_init
+
+3.) Use the output of the strings to give input to the binary
+kan1shka9@dev:~/Desktop/GDB/8$ ./pass_guess l33tsp3ak
+Secret code: 7854-9624-8547-1236
+
+4.) Runtime analysis
+kan1shka9@dev:~/Desktop/GDB/8$ gdb ./pass_guess
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./pass_guess...done.
+(gdb) info variables
+All defined variables:
+
+Non-debugging symbols:
+0x080485f8  _fp_hw
+0x080485fc  _IO_stdin_used
+0x08048798  __FRAME_END__
+0x08049f08  __frame_dummy_init_array_entry
+0x08049f08  __init_array_start
+0x08049f0c  __do_global_dtors_aux_fini_array_entry
+0x08049f0c  __init_array_end
+0x08049f10  __JCR_END__
+0x08049f10  __JCR_LIST__
+0x08049f14  _DYNAMIC
+0x0804a000  _GLOBAL_OFFSET_TABLE_
+0x0804a024  __data_start
+0x0804a024  data_start
+0x0804a028  __dso_handle
+0x0804a02c  __TMC_END__
+0x0804a02c  __bss_start
+0x0804a02c  _edata
+0x0804a02c  completed
+0x0804a030  _end
+(gdb) info functions
+All defined functions:
+
+File pass_guess.c:
+int IsPasswordCorrect(char *, char *);
+void UnlockSecret(void);
+int main(int, char **);
+
+Non-debugging symbols:
+0x08048314  _init
+0x08048350  strcmp@plt
+0x08048360  printf@plt
+0x08048370  puts@plt
+0x08048380  __gmon_start__@plt
+0x08048390  exit@plt
+0x080483a0  __libc_start_main@plt
+0x080483b0  _start
+0x080483e0  __x86.get_pc_thunk.bx
+0x080483f0  deregister_tm_clones
+0x08048420  register_tm_clones
+0x08048460  __do_global_dtors_aux
+0x08048480  frame_dummy
+0x08048570  __libc_csu_init
+0x080485e0  __libc_csu_fini
+0x080485e4  _fini
+(gdb) break main
+Breakpoint 1 at 0x80484f9: file pass_guess.c, line 32.
+(gdb) run demo
+Starting program: /home/kan1shka9/Desktop/GDB/8/pass_guess demo
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at pass_guess.c:32
+32              int checkPass = 0;
+(gdb) call UnlockSecret()
+Secret code: 7854-9624-8547-1236
+(gdb) break IsPasswordCorrect
+Breakpoint 2 at 0x80484c7: file pass_guess.c, line 18.
+(gdb) c
+Continuing.
+
+Breakpoint 2, IsPasswordCorrect (password=0xbffff884 "demo", userInput=0x8048638 "l33tsp3ak") at pass_guess.c:18
+18              result = strcmp(password, userInput);
+(gdb) print password
+$1 = 0xbffff884 "demo"
+(gdb) print userInput
+$2 = 0x8048638 "l33tsp3ak"
+(gdb) info scope IsPasswordCorrect
+Scope for IsPasswordCorrect:
+Symbol password is a complex DWARF expression:
+     0: DW_OP_fbreg 0
+, length 4.
+Symbol userInput is a complex DWARF expression:
+     0: DW_OP_fbreg 4
+, length 4.
+Symbol result is a complex DWARF expression:
+     0: DW_OP_fbreg -20
+, length 4.
+(gdb) l
+13      int IsPasswordCorrect(char *password, char *userInput)
+14      {
+15
+16              int result;
+17
+18              result = strcmp(password, userInput);
+19
+20              if (result == 0)
+21              {
+22                      return 1;
+(gdb) c
+Continuing.
+
+
+ Incorrect Password! please try again!
+
+
+[Inferior 1 (process 3019) exited normally]
+(gdb) run l33tsp3ak
+Starting program: /home/kan1shka9/Desktop/GDB/8/pass_guess l33tsp3ak
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at pass_guess.c:32
+32              int checkPass = 0;
+(gdb) c
+Continuing.
+
+Breakpoint 2, IsPasswordCorrect (password=0xbffff87f "l33tsp3ak", userInput=0x8048638 "l33tsp3ak")
+    at pass_guess.c:18
+18              result = strcmp(password, userInput);
+(gdb)
+Continuing.
+Secret code: 7854-9624-8547-1236
+
+[Inferior 1 (process 3033) exited normally]
+(gdb)
+The program is not being run.
+(gdb)

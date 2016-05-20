@@ -1,0 +1,329 @@
+Breakpoints, Examining Registers and Memory
+
+1.) Compile the programs with and without debug symbols
+kan1shka9@dev:~/Desktop/GDB/5$ vim echo_program.c
+kan1shka9@dev:~/Desktop/GDB/5$ ls
+echo_program.c
+kan1shka9@dev:~/Desktop/GDB/5$ gcc echo_program.c -o echo_program_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/5$ ls
+echo_program.c  echo_program_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/5$ gcc echo_program.c -ggdb -o echo_program_DEBUG
+kan1shka9@dev:~/Desktop/GDB/5$ ls
+echo_program.c  echo_program_DEBUG  echo_program_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/5$ ls -la
+total 32
+drwxrwxr-x 2 kan1shka9 kan1shka9 4096 Jul  6 10:37 .
+drwxrwxr-x 7 kan1shka9 kan1shka9 4096 Jul  6 10:16 ..
+-rw-rw-r-- 1 kan1shka9 kan1shka9  258 Jul  6 10:36 echo_program.c
+-rwxrwxr-x 1 kan1shka9 kan1shka9 8545 Jul  6 10:37 echo_program_DEBUG
+-rwxrwxr-x 1 kan1shka9 kan1shka9 7453 Jul  6 10:36 echo_program_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/5$ ./echo_program_DEBUG
+Segmentation fault (core dumped)
+kan1shka9@dev:~/Desktop/GDB/5$ ./echo_program_DEBUG TESTING
+
+
+TESTING
+
+kan1shka9@dev:~/Desktop/GDB/5$ ./echo_program_NO_DEBUG TEST1ing
+
+
+TEST1ing
+
+kan1shka9@dev:~/Desktop/GDB/5$
+
+2.) Attempt buffer overflow
+kan1shka9@dev:~/Desktop/GDB/5$ ./echo_program_NO_DEBUG "Kan1shka9 is learning GDB"
+
+
+Kan1shka9 is learning GDB
+
+*** stack smashing detected ***: ./echo_program_NO_DEBUG terminated
+Aborted (core dumped)
+kan1shka9@dev:~/Desktop/GDB/5$
+
+3.) Run the program in GDB and exploring the options
+kan1shka9@dev:~/Desktop/GDB/5$ gdb ./echo_program_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./echo_program_DEBUG...done.
+(gdb) run kan1shka9
+Starting program: /home/kan1shka9/Desktop/GDB/5/echo_program_DEBUG kan1shka9
+
+
+kan1shka9
+
+[Inferior 1 (process 5710) exited normally]
+(gdb) list 1
+1       //echo_program.c
+2
+3       #include<stdio.h>
+4       #include<string.h>
+5
+6       void EchoInput(char *userInput)
+7       {
+8           char buffer[20];
+9
+10          strcpy(buffer, userInput);
+(gdb)
+11
+12          printf("\n\n%s\n\n", buffer);
+13
+14      }
+15
+16      int main(int argc, char **argv)
+17      {
+18          EchoInput(argv[1]);
+19
+20          return 0;
+(gdb)
+21
+22      }
+(gdb)
+Line number 23 out of range; echo_program.c has 22 lines.
+(gdb) break main
+Breakpoint 1 at 0x80484f5: file echo_program.c, line 18.
+(gdb) l 18
+13
+14      }
+15
+16      int main(int argc, char **argv)
+17      {
+18          EchoInput(argv[1]);
+19
+20          return 0;
+21
+22      }
+(gdb) info registers
+The program has no registers now.
+(gdb) run kan1shka9
+Starting program: /home/kan1shka9/Desktop/GDB/5/echo_program_DEBUG kan1shka9
+
+Breakpoint 1, main (argc=2, argv=0xbffff704) at echo_program.c:18
+18          EchoInput(argv[1]);
+(gdb) info registers
+eax            0x2      2
+ecx            0xd5cd1450       -707980208
+edx            0xbffff694       -1073744236
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff650       0xbffff650
+ebp            0xbffff668       0xbffff668
+esi            0x0      0
+edi            0x0      0
+eip            0x80484f5        0x80484f5 <main+9>
+eflags         0x286    [ PF SF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) break EchoInput
+Breakpoint 2 at 0x80484a9: file echo_program.c, line 7.
+(gdb) l 16
+11
+12          printf("\n\n%s\n\n", buffer);
+13
+14      }
+15
+16      int main(int argc, char **argv)
+17      {
+18          EchoInput(argv[1]);
+19
+20          return 0;
+(gdb) l 7
+2
+3       #include<stdio.h>
+4       #include<string.h>
+5
+6       void EchoInput(char *userInput)
+7       {
+8           char buffer[20];
+9
+10          strcpy(buffer, userInput);
+11
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080484f5 in main at echo_program.c:18
+        breakpoint already hit 1 time
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+(gdb) disable 1
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep n   0x080484f5 in main at echo_program.c:18
+        breakpoint already hit 1 time
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+(gdb) enable 1
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080484f5 in main at echo_program.c:18
+        breakpoint already hit 1 time
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+(gdb) delete 1
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+(gdb) break main
+Breakpoint 3 at 0x80484f5: file echo_program.c, line 18.
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+3       breakpoint     keep y   0x080484f5 in main at echo_program.c:18
+(gdb) help x
+Examine memory: x/FMT ADDRESS.
+ADDRESS is an expression for the memory address to examine.
+FMT is a repeat count followed by a format letter and a size letter.
+Format letters are o(octal), x(hex), d(decimal), u(unsigned decimal),
+  t(binary), f(float), a(address), i(instruction), c(char), s(string)
+  and z(hex, zero padded on the left).
+Size letters are b(byte), h(halfword), w(word), g(giant, 8 bytes).
+The specified number of objects of the specified size are printed
+according to the format.
+
+Defaults for format and size letters are those previously used.
+Default count is 1.  Default address is following last thing printed
+with this command or "print".
+(gdb) print argv[1]
+$1 = 0xbffff870 "kan1shka9"
+(gdb) print argv[0]
+$2 = 0xbffff83f "/home/kan1shka9/Desktop/GDB/5/echo_program_DEBUG"
+(gdb) x/1s argv[1]
+0xbffff870:     "kan1shka9"
+(gdb) x/1s argv[0]
+0xbffff83f:     "/home/kan1shka9/Desktop/GDB/5/echo_program_DEBUG"
+(gdb) info registers
+eax            0x2      2
+ecx            0xd5cd1450       -707980208
+edx            0xbffff694       -1073744236
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff650       0xbffff650
+ebp            0xbffff668       0xbffff668
+esi            0x0      0
+edi            0x0      0
+eip            0x80484f5        0x80484f5 <main+9>
+eflags         0x286    [ PF SF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x080484ec <+0>:     push   %ebp
+   0x080484ed <+1>:     mov    %esp,%ebp
+   0x080484ef <+3>:     and    $0xfffffff0,%esp
+   0x080484f2 <+6>:     sub    $0x10,%esp
+=> 0x080484f5 <+9>:     mov    0xc(%ebp),%eax
+   0x080484f8 <+12>:    add    $0x4,%eax
+   0x080484fb <+15>:    mov    (%eax),%eax
+   0x080484fd <+17>:    mov    %eax,(%esp)
+   0x08048500 <+20>:    call   0x804849d <EchoInput>
+   0x08048505 <+25>:    mov    $0x0,%eax
+   0x0804850a <+30>:    leave
+   0x0804850b <+31>:    ret
+End of assembler dump.
+(gdb) x/i 0x80484f5
+=> 0x80484f5 <main+9>:  mov    0xc(%ebp),%eax
+(gdb) x/10i 0x80484f5
+=> 0x80484f5 <main+9>:  mov    0xc(%ebp),%eax
+   0x80484f8 <main+12>: add    $0x4,%eax
+   0x80484fb <main+15>: mov    (%eax),%eax
+   0x80484fd <main+17>: mov    %eax,(%esp)
+   0x8048500 <main+20>: call   0x804849d <EchoInput>
+   0x8048505 <main+25>: mov    $0x0,%eax
+   0x804850a <main+30>: leave
+   0x804850b <main+31>: ret
+   0x804850c:   xchg   %ax,%ax
+   0x804850e:   xchg   %ax,%ax
+(gdb) info registers
+eax            0x2      2
+ecx            0xd5cd1450       -707980208
+edx            0xbffff694       -1073744236
+ebx            0xb7fc1000       -1208217600
+esp            0xbffff650       0xbffff650
+ebp            0xbffff668       0xbffff668
+esi            0x0      0
+edi            0x0      0
+eip            0x80484f5        0x80484f5 <main+9>
+eflags         0x286    [ PF SF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) x/10xw $esp
+0xbffff650:     0xb7fc13c4      0xb7fff000      0x0804851b      0xb7fc1000
+0xbffff660:     0x08048510      0x00000000      0x00000000      0xb7e2fa83
+0xbffff670:     0x00000002      0xbffff704
+(gdb) x/20xw $esp
+0xbffff650:     0xb7fc13c4      0xb7fff000      0x0804851b      0xb7fc1000
+0xbffff660:     0x08048510      0x00000000      0x00000000      0xb7e2fa83
+0xbffff670:     0x00000002      0xbffff704      0xbffff710      0xb7feccea
+0xbffff680:     0x00000002      0xbffff704      0xbffff6a4      0x0804a01c
+0xbffff690:     0x0804823c      0xb7fc1000      0x00000000      0x00000000
+(gdb) x/1xw argv
+0xbffff704:     0xbffff83f
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x080484ec <+0>:     push   %ebp
+   0x080484ed <+1>:     mov    %esp,%ebp
+   0x080484ef <+3>:     and    $0xfffffff0,%esp
+   0x080484f2 <+6>:     sub    $0x10,%esp
+=> 0x080484f5 <+9>:     mov    0xc(%ebp),%eax
+   0x080484f8 <+12>:    add    $0x4,%eax
+   0x080484fb <+15>:    mov    (%eax),%eax
+   0x080484fd <+17>:    mov    %eax,(%esp)
+   0x08048500 <+20>:    call   0x804849d <EchoInput>
+   0x08048505 <+25>:    mov    $0x0,%eax
+   0x0804850a <+30>:    leave
+   0x0804850b <+31>:    ret
+End of assembler dump.
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+3       breakpoint     keep y   0x080484f5 in main at echo_program.c:18
+(gdb) break *0x08048505
+Breakpoint 4 at 0x8048505: file echo_program.c, line 20.
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x080484a9 in EchoInput at echo_program.c:7
+3       breakpoint     keep y   0x080484f5 in main at echo_program.c:18
+4       breakpoint     keep y   0x08048505 in main at echo_program.c:20
+(gdb) continue
+Continuing.
+
+Breakpoint 2, EchoInput (userInput=0xbffff870 "kan1shka9") at echo_program.c:7
+7       {
+(gdb) stepi
+0x080484af      7       {
+(gdb) stepi
+0x080484b2      7       {
+(gdb) step
+10          strcpy(buffer, userInput);
+(gdb) step
+__strcpy_sse2 () at ../sysdeps/i386/i686/multiarch/strcpy-sse2.S:1613
+1613    ../sysdeps/i386/i686/multiarch/strcpy-sse2.S: No such file or directory.
+(gdb) help step
+Step program until it reaches a different source line.
+Usage: step [N]
+Argument N means step N times (or till program stops for another reason).
+(gdb) help stepi
+Step one instruction exactly.
+Usage: stepi [N]
+Argument N means step N times (or till program stops for another reason).
+(gdb)
+
+

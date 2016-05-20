@@ -1,0 +1,289 @@
+Inspecting Symbols with NM
+
+1.) nm - list symbols from object files
+man nm
+kan1shka9@dev:~/Desktop/2$ nm ./Add_Sub_DEBUG
+080484ad T AddNumbers
+         U atoi@@GLIBC_2.0
+0804a02c B __bss_start
+0804a02c b completed.6591
+0804a024 D __data_start
+0804a024 W data_start
+080483f0 t deregister_tm_clones
+08048460 t __do_global_dtors_aux
+08049f0c t __do_global_dtors_aux_fini_array_entry
+0804a028 D __dso_handle
+08049f14 d _DYNAMIC
+0804a02c D _edata
+0804a034 B _end
+08048614 T _fini
+08048628 R _fp_hw
+08048480 t frame_dummy
+08049f08 t __frame_dummy_init_array_entry
+080487bc r __FRAME_END__
+         U getchar@@GLIBC_2.0
+0804a000 d _GLOBAL_OFFSET_TABLE_
+         w __gmon_start__
+0804a030 B IamAGlobalVariable
+08048314 T _init
+08049f0c t __init_array_end
+08049f08 t __init_array_start
+0804862c R _IO_stdin_used
+         w _ITM_deregisterTMCloneTable
+         w _ITM_registerTMCloneTable
+08049f10 d __JCR_END__
+08049f10 d __JCR_LIST__
+         w _Jv_RegisterClasses
+08048610 T __libc_csu_fini
+080485a0 T __libc_csu_init
+         U __libc_start_main@@GLIBC_2.0
+080484e9 T main
+         U printf@@GLIBC_2.0
+         U puts@@GLIBC_2.0
+08048420 t register_tm_clones
+080483b0 T _start
+080484ca T SubtractNumbers
+0804a02c D __TMC_END__
+080483e0 T __x86.get_pc_thunk.bx
+kan1shka9@dev:~/Desktop/GDB/3$ nm -a ./Add_Sub_change
+00000000 a
+080484ad T AddNumbers
+00000000 a Add_Sub_change.c
+         U atoi@@GLIBC_2.0
+0804a030 b .bss
+0804a030 B __bss_start
+00000000 n .comment
+0804a030 b completed.6591
+00000000 a crtstuff.c
+00000000 a crtstuff.c
+0804a024 d .data
+0804a024 D __data_start
+0804a024 W data_start
+00000000 N .debug_abbrev
+00000000 N .debug_aranges
+00000000 N .debug_info
+00000000 N .debug_line
+00000000 N .debug_str
+080483f0 t deregister_tm_clones
+08048460 t __do_global_dtors_aux
+08049f0c t __do_global_dtors_aux_fini_array_entry
+0804a028 D __dso_handle
+08049f14 d .dynamic
+08049f14 d _DYNAMIC
+0804824c r .dynstr
+080481cc r .dynsym
+0804a030 D _edata
+080486d0 r .eh_frame
+08048694 r .eh_frame_hdr
+0804a038 B _end
+08048614 T _fini
+08048614 t .fini
+08049f0c t .fini_array
+08048628 R _fp_hw
+08048480 t frame_dummy
+08049f08 t __frame_dummy_init_array_entry
+080487bc r __FRAME_END__
+         U getchar@@GLIBC_2.0
+0804a000 d _GLOBAL_OFFSET_TABLE_
+         w __gmon_start__
+080481ac r .gnu.hash
+080482aa r .gnu.version
+080482bc r .gnu.version_r
+08049ffc d .got
+0804a000 d .got.plt
+0804a034 B IamAGlobalVariable
+0804a02c D IamInitializedGlobalVariable
+08048314 T _init
+08048314 t .init
+08049f08 t .init_array
+08049f0c t __init_array_end
+08049f08 t __init_array_start
+08048154 r .interp
+0804862c R _IO_stdin_used
+         w _ITM_deregisterTMCloneTable
+         w _ITM_registerTMCloneTable
+08049f10 d .jcr
+08049f10 d __JCR_END__
+08049f10 d __JCR_LIST__
+         w _Jv_RegisterClasses
+08048610 T __libc_csu_fini
+080485a0 T __libc_csu_init
+         U __libc_start_main@@GLIBC_2.0
+080484e9 T main
+08048168 r .note.ABI-tag
+08048188 r .note.gnu.build-id
+08048340 t .plt
+         U printf@@GLIBC_2.0
+         U puts@@GLIBC_2.0
+08048420 t register_tm_clones
+080482dc r .rel.dyn
+080482e4 r .rel.plt
+08048628 r .rodata
+080483b0 T _start
+080484ca T SubtractNumbers
+080483b0 t .text
+0804a030 D __TMC_END__
+080483e0 T __x86.get_pc_thunk.bx
+kan1shka9@dev:~/Desktop/GDB/3$
+
+2.) Grep for function names
+kan1shka9@dev:~/Desktop/2$ nm ./Add_Sub_DEBUG | grep AddNumbers
+080484ad T AddNumbers
+Grep for functions in Uninitialized section
+kan1shka9@dev:~/Desktop/2$ nm ./Add_Sub_DEBUG | grep ' B '
+0804a02c B __bss_start
+0804a034 B _end
+0804a030 B IamAGlobalVariable
+Grep for functions in Initialized section
+kan1shka9@dev:~/Desktop/GDB/3$ ls
+Add_Sub_change.c
+kan1shka9@dev:~/Desktop/GDB/3$ gcc Add_Sub_change.c -ggdb -o Add_Sub_change
+kan1shka9@dev:~/Desktop/GDB/3$ ls
+Add_Sub_change  Add_Sub_change.c
+kan1shka9@dev:~/Desktop/GDB/3$ nm -a ./Add_Sub_change | grep 'D'
+0804a024 D __data_start
+0804a028 D __dso_handle
+08049f14 d _DYNAMIC
+0804a030 D _edata
+080487bc r __FRAME_END__
+0804a02c D IamInitializedGlobalVariable
+08049f10 d __JCR_END__
+0804a030 D __TMC_END__
+kan1shka9@dev:~/Desktop/GDB/3$ nm -a ./Add_Sub_change | grep ' D '
+0804a024 D __data_start
+0804a028 D __dso_handle
+0804a030 D _edata
+0804a02c D IamInitializedGlobalVariable
+0804a030 D __TMC_END__
+Grep for symbols in text section
+kan1shka9@dev:~/Desktop/GDB/3$ nm -a ./Add_Sub_change | grep ' T '
+080484ad T AddNumbers
+08048614 T _fini
+08048314 T _init
+08048610 T __libc_csu_fini
+080485a0 T __libc_csu_init
+080484e9 T main
+080483b0 T _start
+080484ca T SubtractNumbers
+080483e0 T __x86.get_pc_thunk.bx
+
+3.) In sorted order
+kan1shka9@dev:~/Desktop/2$ nm -n ./Add_Sub_DEBUG
+         U atoi@@GLIBC_2.0
+         U getchar@@GLIBC_2.0
+         w __gmon_start__
+         w _ITM_deregisterTMCloneTable
+         w _ITM_registerTMCloneTable
+         w _Jv_RegisterClasses
+         U __libc_start_main@@GLIBC_2.0
+         U printf@@GLIBC_2.0
+         U puts@@GLIBC_2.0
+08048314 T _init
+080483b0 T _start
+080483e0 T __x86.get_pc_thunk.bx
+080483f0 t deregister_tm_clones
+08048420 t register_tm_clones
+08048460 t __do_global_dtors_aux
+08048480 t frame_dummy
+080484ad T AddNumbers
+080484ca T SubtractNumbers
+080484e9 T main
+080485a0 T __libc_csu_init
+08048610 T __libc_csu_fini
+08048614 T _fini
+08048628 R _fp_hw
+0804862c R _IO_stdin_used
+080487bc r __FRAME_END__
+08049f08 t __frame_dummy_init_array_entry
+08049f08 t __init_array_start
+08049f0c t __do_global_dtors_aux_fini_array_entry
+08049f0c t __init_array_end
+08049f10 d __JCR_END__
+08049f10 d __JCR_LIST__
+08049f14 d _DYNAMIC
+0804a000 d _GLOBAL_OFFSET_TABLE_
+0804a024 D __data_start
+0804a024 W data_start
+0804a028 D __dso_handle
+0804a02c B __bss_start
+0804a02c b completed.6591
+0804a02c D _edata
+0804a02c D __TMC_END__
+0804a030 B IamAGlobalVariable
+0804a034 B _end
+
+4.) List external symbols
+kan1shka9@dev:~/Desktop/2$ nm -g ./Add_Sub_DEBUG
+080484ad T AddNumbers
+         U atoi@@GLIBC_2.0
+0804a02c B __bss_start
+0804a024 D __data_start
+0804a024 W data_start
+0804a028 D __dso_handle
+0804a02c D _edata
+0804a034 B _end
+08048614 T _fini
+08048628 R _fp_hw
+         U getchar@@GLIBC_2.0
+         w __gmon_start__
+0804a030 B IamAGlobalVariable
+08048314 T _init
+0804862c R _IO_stdin_used
+         w _ITM_deregisterTMCloneTable
+         w _ITM_registerTMCloneTable
+         w _Jv_RegisterClasses
+08048610 T __libc_csu_fini
+080485a0 T __libc_csu_init
+         U __libc_start_main@@GLIBC_2.0
+080484e9 T main
+         U printf@@GLIBC_2.0
+         U puts@@GLIBC_2.0
+080483b0 T _start
+080484ca T SubtractNumbers
+0804a02c D __TMC_END__
+080483e0 T __x86.get_pc_thunk.bx
+
+5.) Display size
+kan1shka9@dev:~/Desktop/2$ nm -S ./Add_Sub_DEBUG
+080484ad 0000001d T AddNumbers
+         U atoi@@GLIBC_2.0
+0804a02c B __bss_start
+0804a02c 00000001 b completed.6591
+0804a024 D __data_start
+0804a024 W data_start
+080483f0 t deregister_tm_clones
+08048460 t __do_global_dtors_aux
+08049f0c t __do_global_dtors_aux_fini_array_entry
+0804a028 D __dso_handle
+08049f14 d _DYNAMIC
+0804a02c D _edata
+0804a034 B _end
+08048614 T _fini
+08048628 00000004 R _fp_hw
+08048480 t frame_dummy
+08049f08 t __frame_dummy_init_array_entry
+080487bc r __FRAME_END__
+         U getchar@@GLIBC_2.0
+0804a000 d _GLOBAL_OFFSET_TABLE_
+         w __gmon_start__
+0804a030 00000004 B IamAGlobalVariable
+08048314 T _init
+08049f0c t __init_array_end
+08049f08 t __init_array_start
+0804862c 00000004 R _IO_stdin_used
+         w _ITM_deregisterTMCloneTable
+         w _ITM_registerTMCloneTable
+08049f10 d __JCR_END__
+08049f10 d __JCR_LIST__
+         w _Jv_RegisterClasses
+08048610 00000002 T __libc_csu_fini
+080485a0 00000061 T __libc_csu_init
+         U __libc_start_main@@GLIBC_2.0
+080484e9 000000b1 T main
+         U printf@@GLIBC_2.0
+         U puts@@GLIBC_2.0
+08048420 t register_tm_clones
+080483b0 T _start
+080484ca 0000001f T SubtractNumbers
+0804a02c D __TMC_END__
+080483e0 00000004 T __x86.get_pc_thunk.bx

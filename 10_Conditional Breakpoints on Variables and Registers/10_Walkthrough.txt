@@ -1,0 +1,246 @@
+Conditional Breakpoints on Variables and Registers
+
+1.) Compile and run the program
+kan1shka9@dev:~/Desktop/GDB/10$ ls
+conb.c
+kan1shka9@dev:~/Desktop/GDB/10$ gcc -ggdb conb.c -o conb_DEBUG
+kan1shka9@dev:~/Desktop/GDB/10$ gcc conb.c -o conb_NO_DEBUG
+kan1shka9@dev:~/Desktop/GDB/10$ ls
+conb.c  conb_DEBUG  conb_NO_DEBUG
+
+2.) Single step using GDB
+kan1shka9@dev:~/Desktop/GDB/10$ gdb ./conb_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./conb_DEBUG...done.
+(gdb) l
+1       // conb.c
+2
+3       #include<stdio.h>
+4
+5       int main(int argc, char **argv)
+6       {
+7           int counter = 10;
+8
+9           while (counter --)
+10          {
+(gdb)
+11              printf("%d\n", counter);
+12          }
+13
+14          if (strcmp(argv[1], "hahaha") == 0)
+15          {
+16              printf("Correct password!\n\n");
+17          }
+18          else
+19          {
+20              printf("Sorry! Please try again! \n\n");
+(gdb) break 11
+Breakpoint 1 at 0x8048490: file conb.c, line 11.
+(gdb) run demopass
+Starting program: /home/kan1shka9/Desktop/GDB/10/conb_DEBUG demopass
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at conb.c:11
+11              printf("%d\n", counter);
+(gdb) print counter
+$1 = 9
+(gdb) c
+Continuing.
+9
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at conb.c:11
+11              printf("%d\n", counter);
+(gdb) print counter
+$2 = 8
+(gdb) c
+Continuing.
+8
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at conb.c:11
+11              printf("%d\n", counter);
+(gdb) print counter
+$3 = 7
+(gdb) c
+Continuing.
+7
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at conb.c:11
+11              printf("%d\n", counter);
+(gdb) print counter
+$4 = 6
+(gdb) c
+Continuing.
+6
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at conb.c:11
+11              printf("%d\n", counter);
+(gdb) print counter
+$5 = 5
+(gdb) quit
+A debugging session is active.
+
+        Inferior 1 [process 3654] will be killed.
+
+Quit anyway? (y or n) y
+
+3.) Conditional Breakpoints -> When you have source
+kan1shka9@dev:~/Desktop/GDB/10$ gdb ./conb_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./conb_DEBUG...done.
+(gdb) l
+1       // conb.c
+2
+3       #include<stdio.h>
+4
+5       int main(int argc, char **argv)
+6       {
+7           int counter = 10;
+8
+9           while (counter --)
+10          {
+(gdb)
+11              printf("%d\n", counter);
+12          }
+13
+14          if (strcmp(argv[1], "hahaha") == 0)
+15          {
+16              printf("Correct password!\n\n");
+17          }
+18          else
+19          {
+20              printf("Sorry! Please try again! \n\n");
+(gdb) break 11
+Breakpoint 1 at 0x8048490: file conb.c, line 11.
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x08048490 in main at conb.c:11
+(gdb) condition 1 counter == 5
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x08048490 in main at conb.c:11
+        stop only if counter == 5
+(gdb) run demopass
+Starting program: /home/kan1shka9/Desktop/GDB/10/conb_DEBUG demopass
+9
+8
+7
+6
+
+Breakpoint 1, main (argc=2, argv=0xbffff724) at conb.c:11
+11              printf("%d\n", counter);
+(gdb) print counter
+$1 = 5
+(gdb) quit
+A debugging session is active.
+
+        Inferior 1 [process 3675] will be killed.
+
+Quit anyway? (y or n) y
+
+4.) Conditional Breakpoints -> When you don't have source
+kan1shka9@dev:~/Desktop/GDB/10$ gdb ./conb_NO_DEBUG
+GNU gdb (Ubuntu 7.7.1-0ubuntu5~14.04.2) 7.7.1
+Copyright (C) 2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./conb_NO_DEBUG...(no debugging symbols found)...done.
+(gdb) set disassembly-flavor intel
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x0804847d <+0>:     push   ebp
+   0x0804847e <+1>:     mov    ebp,esp
+   0x08048480 <+3>:     and    esp,0xfffffff0
+   0x08048483 <+6>:     sub    esp,0x20
+   0x08048486 <+9>:     mov    DWORD PTR [esp+0x1c],0xa
+   0x0804848e <+17>:    jmp    0x80484a4 <main+39>
+   0x08048490 <+19>:    mov    eax,DWORD PTR [esp+0x1c]
+   0x08048494 <+23>:    mov    DWORD PTR [esp+0x4],eax
+   0x08048498 <+27>:    mov    DWORD PTR [esp],0x8048580
+   0x0804849f <+34>:    call   0x8048340 <printf@plt>
+   0x080484a4 <+39>:    mov    eax,DWORD PTR [esp+0x1c]
+   0x080484a8 <+43>:    lea    edx,[eax-0x1]
+   0x080484ab <+46>:    mov    DWORD PTR [esp+0x1c],edx
+   0x080484af <+50>:    test   eax,eax
+   0x080484b1 <+52>:    jne    0x8048490 <main+19>
+   0x080484b3 <+54>:    mov    eax,DWORD PTR [ebp+0xc]
+   0x080484b6 <+57>:    add    eax,0x4
+   0x080484b9 <+60>:    mov    eax,DWORD PTR [eax]
+   0x080484bb <+62>:    mov    DWORD PTR [esp+0x4],0x8048584
+   0x080484c3 <+70>:    mov    DWORD PTR [esp],eax
+   0x080484c6 <+73>:    call   0x8048330 <strcmp@plt>
+   0x080484cb <+78>:    test   eax,eax
+   0x080484cd <+80>:    jne    0x80484dd <main+96>
+   0x080484cf <+82>:    mov    DWORD PTR [esp],0x804858b
+   0x080484d6 <+89>:    call   0x8048350 <puts@plt>
+   0x080484db <+94>:    jmp    0x80484e9 <main+108>
+   0x080484dd <+96>:    mov    DWORD PTR [esp],0x804859e
+   0x080484e4 <+103>:   call   0x8048350 <puts@plt>
+   0x080484e9 <+108>:   mov    eax,0x0
+   0x080484ee <+113>:   leave
+   0x080484ef <+114>:   ret
+End of assembler dump.
+(gdb) break *0x080484cb
+Breakpoint 1 at 0x80484cb
+(gdb) condition 1 $eax != 0
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080484cb <main+78>
+        stop only if $eax != 0
+(gdb) run demopass
+Starting program: /home/kan1shka9/Desktop/GDB/10/conb_NO_DEBUG demopass
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+
+Breakpoint 1, 0x080484cb in main ()
+(gdb) print $eax
+$1 = -1
+(gdb) set $eax = 0
+(gdb) c
+Continuing.
+Correct password!
+
+[Inferior 1 (process 3730) exited normally]
+(gdb)
